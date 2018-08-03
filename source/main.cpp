@@ -64,7 +64,10 @@ int main(int argc, char **argv)
         drawUI();
 
         if (g_scene == TITLE_SCENE)
+        {
             titleScene();
+            drawSeperators();
+        }
         if (g_scene == INFO_SCENE)
             infoScene();
         if (g_scene == UPDATE_SCENE)

@@ -56,6 +56,8 @@ bool loadTitles(void)
             }
         titleListTXT.close();
         }
+        if (!g_idoptions.size())
+            return false;
         return true;
     }
     else

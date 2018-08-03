@@ -165,11 +165,13 @@ static inline uint32_t DecodeUTF8(const char** ptr)
     return 0xFFFD;
 }
 
-static void DrawText_(u32 font, uint32_t x, uint32_t y, color_t clr, const char *text, uint32_t max_width, const char *end_text)
+static uint DrawText_(u32 font, uint32_t x, uint32_t y, color_t clr, const char *text, uint32_t max_width, int start_line, uint32_t max_height, const char *end_text)
 {
     uint32_t origX = x;
-    if (s_font_faces_total==0) return;
-    if (!FontSetType(font)) return;
+    uint32_t origY = y;
+    int current_line = 0;
+    if (s_font_faces_total==0) return 0;
+    if (!FontSetType(font)) return 0;
     s_font_lastusedface = s_font_faces[0];
 
     while (*text)
@@ -177,6 +179,10 @@ static void DrawText_(u32 font, uint32_t x, uint32_t y, color_t clr, const char 
         if (max_width && x-origX >= max_width) {
             text = end_text;
             max_width = 0;
+        }
+        if (max_height && y-origY >= max_height) {
+            text = end_text;
+            max_height = 0;
         }
 
         glyph_t glyph;
@@ -191,7 +197,9 @@ static void DrawText_(u32 font, uint32_t x, uint32_t y, color_t clr, const char 
             }
 
             x = origX;
-            y += s_font_lastusedface->size->metrics.height / 64;
+            if (current_line >= start_line)
+                y += s_font_lastusedface->size->metrics.height / 64;
+            current_line++;
             continue;
         }
 
@@ -201,27 +209,36 @@ static void DrawText_(u32 font, uint32_t x, uint32_t y, color_t clr, const char 
                 continue;
         }
 
-        DrawGlyph(x, y, clr, &glyph);
-        x += glyph.advance;
+        if (current_line >= start_line) {
+            DrawGlyph(x, y, clr, &glyph);
+            x += glyph.advance;
+        }
     }
+    return current_line;
 }
 
 struct coord DrawText(u32 font, uint32_t x, uint32_t y, color_t clr, const char *text)
 {
-    DrawText_(font, x, y, clr, text, 0, NULL);
+    DrawText_(font, x, y, clr, text, 0, 0, 0, NULL);
     uint32_t w, h;
     GetTextDimensions(font, text, &w, &h);
     struct coord pos = {x+w, y+h-(g_scale*2)};
     return pos;
 }
 
-struct coord DrawTextTruncate(u32 font, uint32_t x, uint32_t y, color_t clr, const char *text, uint32_t max_width, const char *end_text)
+struct coord DrawTextTruncateW(u32 font, uint32_t x, uint32_t y, color_t clr, const char *text, uint32_t max_width, const char *end_text)
 {
-    DrawText_(font, x, y, clr, text, max_width, end_text);
+    DrawText_(font, x, y, clr, text, max_width, 0, 0, end_text);
     uint32_t w, h;
     GetTextDimensions(font, text, &w, &h);
     struct coord pos = {x + w, y + h - (g_scale * 2)};
     return pos;
+}
+
+int DrawTextTruncateH(u32 font, uint32_t x, uint32_t y, color_t clr, const char *text, int start_line, uint32_t max_height, const char *end_text)
+{
+    int infoPageLines = DrawText_(font, x, y, clr, text, 0, start_line, max_height, end_text);
+    return infoPageLines;
 }
 
 void GetTextDimensions(u32 font, const char* text, uint32_t* width_out, uint32_t* height_out)

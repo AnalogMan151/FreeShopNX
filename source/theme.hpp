@@ -5,6 +5,7 @@ typedef struct
     color_t textColor;
     color_t selectedColor;
     color_t backgroundColor;
+    color_t backgroundDim;
     color_t highlightColor;
     color_t seperatorColor;
 } theme_t;

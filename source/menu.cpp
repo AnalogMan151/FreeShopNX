@@ -40,8 +40,72 @@ void printTitles(void)
 
 void printInfo(string rightsID)
 {
-    if (g_infoJSON.count(rightsID))
-        DrawText(fontSmall, 45, 96, themeCurrent.textColor, g_infoJSON[rightsID]["intro"].get<std::string>().c_str());
+    for (int y = 0; y < 720; y++)
+    {
+        for (int x = 0; x < 1280; x++)
+        {
+            DrawPixel(x, y, themeCurrent.backgroundDim);
+        }
+    }
+    for (int y = 0; y < 720; y++)
+    {
+        for (int x = 200; x < 1080; x++)
+        {
+            DrawPixel(x, y, themeCurrent.backgroundColor);
+        }
+    }
+    for (int x = 230; x < 1050; x++)
+    {
+        DrawPixel(x, 54, themeCurrent.seperatorColor);
+        DrawPixel(x, 676, themeCurrent.seperatorColor);
+    }
+
+    if (g_infoLoaded)
+    {
+        if (g_infoJSON.count(rightsID))
+        {
+            string title = g_infoJSON[rightsID]["title"].get<std::string>();
+            string release = g_infoJSON[rightsID]["release_date_string"].get<std::string>();
+            string category = g_infoJSON[rightsID]["category"].get<std::string>();
+            string esbr = g_infoJSON[rightsID]["esbr_rating"].get<std::string>();
+            string players = g_infoJSON[rightsID]["number_of_players"].get<std::string>();
+            string desc = g_infoJSON[rightsID]["intro"].get<std::string>() + "\n\n" + g_infoJSON[rightsID]["description"].get<std::string>();
+            string meta = "Release: " + release + " | Categories: " + category + " | Rating: " + esbr + " | Players: " + players;
+
+            stringstream infoString(desc);
+            string infoLines;
+            vector<string> infoLineList;
+
+            while (getline(infoString, infoLines, '\n'))
+            {
+                infoLineList.push_back(infoLines);
+            }
+
+            g_totalInfoLines = infoLineList.size();
+
+            DrawText(fontLarge, 245, 46, themeCurrent.textColor, title.c_str());
+            DrawText(fontTiny, 250, 70, themeCurrent.textColor, meta.c_str());
+
+            uint32_t centerX;
+            GetTextDimensions(fontSmall, desc.c_str(), &centerX, NULL);
+            if (!g_infoPageLines)
+                g_infoPageLines = DrawTextTruncateH(fontSmall, (1280-centerX)/2, 120, themeCurrent.textColor, desc.c_str(), 0, 530, "(cont.)");
+            else
+                DrawTextTruncateH(fontSmall, (1280 - centerX) / 2, 120, themeCurrent.textColor, desc.c_str(), g_infoLine, 530, "(cont.)");
+        }
+        else
+        {
+            DrawText(fontLarge, 245, 46, themeCurrent.textColor, "No Info");
+            uint32_t centerX;
+            GetTextDimensions(fontSmall, "No info for this title", &centerX, NULL);
+            DrawText(fontSmall, (1280-centerX)/2, 120, themeCurrent.textColor, "No info for this title");
+        }
+    }
     else
-        DrawText(fontSmall, 45, 96, themeCurrent.textColor, "No info for this title");
+    {
+        DrawText(fontLarge, 245, 46, themeCurrent.textColor, "Error");
+        uint32_t centerX;
+        GetTextDimensions(fontSmall, "Could not load info.json", &centerX, NULL);
+        DrawText(fontSmall, (1280 - centerX) / 2, 120, themeCurrent.textColor, "Could not load info.json");
+    }
 }
