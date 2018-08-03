@@ -5,7 +5,7 @@ extern int installLocation;
 void titleScene(void)
 {
     uint32_t rightX;
-    char btnConfig_bot[] = FON_A " Select   " FON_UP FON_DN " Scroll   " FON_LT FON_RT " Pages   " FON_L FON_R " 10 Pages   " FON_MI " About   " FON_PL " Quit";
+    char btnConfig_bot[] = FON_PL " Quit   " FON_MI " About   " FON_L FON_R " 10 Pages   " FON_LT FON_RT " Pages   " FON_UP FON_DN " Scroll   " FON_A " Select";
     GetTextDimensions(fontSmall, btnConfig_bot, &rightX, NULL);
     DrawText(fontSmall, 1280 - rightX - 30, 704, themeCurrent.textColor, btnConfig_bot);
     printTitles();
@@ -17,10 +17,13 @@ void titleScene(void)
 void infoScene(void)
 {
     uint32_t rightX;
-    char btnConfig_bot[] = FON_A " Install   " FON_B " Back   " FON_UP FON_DN " Scroll";
+    char btnConfig_bot[] = FON_UP FON_DN " Scroll   " FON_B " Back   " FON_A " Install";
     GetTextDimensions(fontSmall, btnConfig_bot, &rightX, NULL);
     DrawText(fontSmall, 1280 - rightX - 30, 704, themeCurrent.textColor, btnConfig_bot);
-    // printInfo();
+    if (g_infoLoaded)
+        printInfo(g_rightsIDs[g_idselected]);
+    else
+        DrawText(fontSmall, 45, 96, themeCurrent.textColor, "Could not load info.json");
 }
 
 void updateScene(void)

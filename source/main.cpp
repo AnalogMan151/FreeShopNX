@@ -5,12 +5,14 @@ u32 g_framebuf_width;
 int g_scene;
 uint g_idselected = 0;
 bool g_titlesLoaded = false;
+bool g_infoLoaded = false;
 
 int main(int argc, char **argv)
 {
     Result rc = 0;
     g_scene = TITLE_SCENE;
     g_titlesLoaded = loadTitles();
+    g_infoLoaded = loadInfo();
 
     gfxInitDefault();
 

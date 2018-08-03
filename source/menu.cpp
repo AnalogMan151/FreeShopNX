@@ -37,3 +37,11 @@ void printTitles(void)
         pos.y += 50;
     }
 }
+
+void printInfo(string rightsID)
+{
+    if (g_infoJSON.count(rightsID))
+        DrawText(fontSmall, 45, 96, themeCurrent.textColor, g_infoJSON[rightsID]["intro"].get<std::string>().c_str());
+    else
+        DrawText(fontSmall, 45, 96, themeCurrent.textColor, "No info for this title");
+}

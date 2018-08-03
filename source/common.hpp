@@ -20,6 +20,7 @@
 using namespace std;
 
 extern bool g_titlesLoaded;
+extern bool g_infoLoaded;
 
 typedef uint8_t u8;
 typedef uint32_t u32;
@@ -40,6 +41,10 @@ typedef union {
 #include "scenes.hpp"
 #include "io.hpp"
 #include "menu.hpp"
+#include "json.hpp"
+using json = nlohmann::json;
+
+extern json g_infoJSON;
 
 static inline uint8_t BlendColor(uint32_t src, uint32_t dst, uint8_t alpha)
 {
