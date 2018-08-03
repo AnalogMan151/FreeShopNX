@@ -2,17 +2,24 @@
 
 #include <stdlib.h>
 #include <stddef.h>
-#include <string.h>
+#include <fstream>
+#include <string>
+#include <cstring>
+#include <vector>
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <limits.h>
 #include <dirent.h>
+#include <sstream>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <math.h>
 #include <switch.h>
 #include <stdint.h>
+using namespace std;
+
+extern bool g_titlesLoaded;
 
 typedef uint8_t u8;
 typedef uint32_t u32;
@@ -31,6 +38,8 @@ typedef union {
 #include "theme.hpp"
 #include "ui.hpp"
 #include "scenes.hpp"
+#include "io.hpp"
+#include "menu.hpp"
 
 static inline uint8_t BlendColor(uint32_t src, uint32_t dst, uint8_t alpha)
 {

@@ -29,8 +29,8 @@ void drawUI(void)
     char btnConfig_top1[64];
     char btnConfig_top2[64];
     sprintf(btnConfig_top1, FON_X " %s", (installLocation) ? "NAND" : "SD");
-    sprintf(btnConfig_top2, FON_Y " UpdateList");
-    GetTextDimensions(fontSmall, FON_X " NAND   " FON_Y " UpdateList", &rightX1, NULL);
+    sprintf(btnConfig_top2, FON_Y " Update List");
+    GetTextDimensions(fontSmall, FON_X " NAND   " FON_Y " Update List", &rightX1, NULL);
     GetTextDimensions(fontSmall, btnConfig_top2, &rightX2, NULL);
     DrawText(fontSmall, 1280 - rightX1 - 30, 32, themeCurrent.textColor, btnConfig_top1);
     DrawText(fontSmall, 1280 - rightX2 - 30, 32, themeCurrent.textColor, btnConfig_top2);

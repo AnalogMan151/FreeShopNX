@@ -5,10 +5,13 @@ extern int installLocation;
 void titleScene(void)
 {
     uint32_t rightX;
-    char btnConfig_bot[] = FON_A " Select   " FON_UP FON_DN " Scroll   " FON_LT FON_RT " Skip 10   " FON_L FON_R " Skip 50   " FON_MI " About   " FON_HM " Quit";
+    char btnConfig_bot[] = FON_A " Select   " FON_UP FON_DN " Scroll   " FON_LT FON_RT " Pages   " FON_L FON_R " 10 Pages   " FON_MI " About   " FON_PL " Quit";
     GetTextDimensions(fontSmall, btnConfig_bot, &rightX, NULL);
     DrawText(fontSmall, 1280 - rightX - 30, 704, themeCurrent.textColor, btnConfig_bot);
-    // printTitles();
+    printTitles();
+    char pages[25];
+    sprintf(pages, "Page: %04i/%04i", ((g_idselected / g_maxEntries) + 1), ((g_displayedTotal / g_maxEntries) + ((g_displayedTotal % g_maxEntries > 0) ? 1 : 0)));
+    DrawText(fontSmall, 30, 704, themeCurrent.textColor, pages);
 }
 
 void infoScene(void)
@@ -86,9 +89,23 @@ void buttonMinus(void)
 
 void buttonUpDown(void)
 {
+    u32 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
     if (g_scene == TITLE_SCENE)
     {
-        // Code to inc/dec selector ID
+        if (kDown & KEY_UP)
+        {
+            if (g_idselected > 0)
+                g_idselected -= 1;
+            else
+                g_idselected = g_displayedTotal - 1;
+        }
+        if (kDown & KEY_DOWN)
+        {
+            if (g_idselected < g_displayedTotal - 1)
+                g_idselected += 1;
+            else
+                g_idselected = 0;
+        }
     }
     if (g_scene == INFO_SCENE)
     {
@@ -98,16 +115,44 @@ void buttonUpDown(void)
 
 void buttonLeftRight(void)
 {
+    u32 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
     if (g_scene == TITLE_SCENE)
     {
-        // Code to inc/dec selector ID * 10
+        if (kDown & KEY_LEFT)
+        {
+            if (g_idselected > g_maxEntries)
+                g_idselected -= g_maxEntries;
+            else
+                g_idselected = 0;
+        }
+        if (kDown & KEY_RIGHT)
+        {
+            if (g_idselected < g_displayedTotal - g_maxEntries)
+                g_idselected += g_maxEntries;
+            else
+                g_idselected = g_displayedTotal - 1;
+        }
     }
 }
 
 void buttonLR(void)
 {
+    u32 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
     if (g_scene == TITLE_SCENE)
     {
-        // Code to inc/dec selector ID * 50
+        if (kDown & KEY_L)
+        {
+            if (g_idselected > g_maxEntries * 10)
+                g_idselected -= g_maxEntries * 10;
+            else
+                g_idselected = 0;
+        }
+        if (kDown & KEY_R)
+        {
+            if (g_idselected < g_displayedTotal - g_maxEntries * 10)
+                g_idselected += g_maxEntries * 10;
+            else
+                g_idselected = g_displayedTotal - 1;
+        }
     }
 }

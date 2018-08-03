@@ -3,11 +3,14 @@
 uint8_t *g_framebuf;
 u32 g_framebuf_width;
 int g_scene;
+uint g_idselected = 0;
+bool g_titlesLoaded = false;
 
 int main(int argc, char **argv)
 {
     Result rc = 0;
     g_scene = TITLE_SCENE;
+    g_titlesLoaded = loadTitles();
 
     gfxInitDefault();
 
@@ -57,6 +60,7 @@ int main(int argc, char **argv)
         memset(g_framebuf, 237, gfxGetFramebufferSize());
 
         drawUI();
+
         if (g_scene == TITLE_SCENE)
             titleScene();
         if (g_scene == INFO_SCENE)
