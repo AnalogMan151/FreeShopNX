@@ -13,18 +13,22 @@ json config;
 bool loadTitles(void)
 {
     ifstream titleListTXT("sdmc:/switch/FreeShopNX/FreeShopNX.txt");
+    if (titleListTXT.peek() == ifstream::traits_type::eof())
+    {
+        titleListTXT.close();
+        return false;
+    }
     string line;
 
     if (titleListTXT.is_open())
     {
+        g_titleIDs.clear();
+        g_masterKeys.clear();
+        g_titleKeys_high.clear();
+        g_titleKeys_low.clear();
+        g_idoptions.clear();
         while (titleListTXT.good())
         {
-            g_titleIDs.clear();
-            g_masterKeys.clear();
-            g_titleKeys_high.clear();
-            g_titleKeys_low.clear();
-            g_idoptions.clear();
-
             while (getline(titleListTXT, line))
             {
                 if (line.empty())
@@ -69,15 +73,21 @@ bool loadTitles(void)
 bool loadInfo(void)
 {
     ifstream infoFile("sdmc:/switch/FreeShopNX/info.json");
+    if (infoFile.peek() == ifstream::traits_type::eof())
+    {
+        infoFile.close();
+        return false;
+    }
 
     if (infoFile.is_open())
     {
         if (infoFile.good())
         {
             infoFile >> g_infoJSON;
+            infoFile.close();
+            return true;
         }
-        infoFile.close();
-        return true;
+        return false;
     }
     else
     {
@@ -88,6 +98,11 @@ bool loadInfo(void)
 bool loadConfig(void)
 {
     ifstream configFile("sdmc:/switch/FreeShopNX/config.conf");
+    if (configFile.peek() == ifstream::traits_type::eof())
+    {
+        configFile.close();
+        return false;
+    }
     string line;
     config.clear();
 

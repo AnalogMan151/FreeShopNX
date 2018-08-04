@@ -68,12 +68,17 @@ void printInfo(string rightsID)
     {
         if (g_infoJSON.count(rightsID))
         {
+            if (!g_infoJSON[rightsID].count("intro"))
+                g_infoJSON[rightsID]["intro"] = "";
             string title = g_infoJSON[rightsID]["title"].get<string>();
             string release = g_infoJSON[rightsID]["release_date_string"].get<string>();
             string category = g_infoJSON[rightsID]["category"].get<string>();
             string esrb = g_infoJSON[rightsID]["esrb_rating"].get<string>();
             string players = g_infoJSON[rightsID]["number_of_players"].get<string>();
-            string desc = g_infoJSON[rightsID]["intro"].get<string>() + "\n\n" + g_infoJSON[rightsID]["description"].get<string>();
+            string intro = g_infoJSON[rightsID]["intro"].get<string>();
+            if (intro != "")
+                intro += "\n\n";
+            string desc = intro + g_infoJSON[rightsID]["description"].get<string>();
             string meta = "Release: " + release + " | Categories: " + category + " | Rating: " + esrb + " | Players: " + players;
 
             stringstream infoString(desc);
