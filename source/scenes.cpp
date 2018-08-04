@@ -85,6 +85,7 @@ void updateScene(void)
         gfxWaitForVsync();
         svcSleepThread((u64)1000000000*5);
     }
+    g_idselected = 0;
 }
 
 void aboutScene(void)
@@ -184,7 +185,7 @@ void buttonUpDown(void)
         }
         if (kDown & KEY_DOWN)
         {
-            if (g_infoLine + g_infoPageLines <= g_totalInfoLines)
+            if (g_infoLine + g_infoPageLines < g_totalInfoLines - 1)
                 g_infoLine += g_infoPageLines;
         }
     }

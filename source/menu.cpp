@@ -92,7 +92,7 @@ void printInfo(string rightsID)
 
             g_totalInfoLines = infoLineList.size();
 
-            DrawText(fontLarge, 245, 46, themeCurrent.textColor, title.c_str());
+            DrawTextTruncateW(fontLarge, 245, 46, themeCurrent.textColor, title.c_str(), 730, "...");
             DrawTextTruncateW(fontTiny, 250, 70, themeCurrent.textColor, meta.c_str(), 770, "...");
 
             uint32_t centerX;
