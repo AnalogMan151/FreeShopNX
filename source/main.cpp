@@ -6,6 +6,7 @@ int g_scene;
 uint g_idselected = 0;
 bool g_titlesLoaded = false;
 bool g_infoLoaded = false;
+FsStorageId g_storageID = FsStorageId_SdCard;
 
 int main(int argc, char **argv)
 {
@@ -21,6 +22,19 @@ int main(int argc, char **argv)
 
     ColorSetId theme;
     rc = setsysInitialize();
+
+    if (R_FAILED(ncmInitialize()))
+        fatalSimple(-1);
+
+    if (R_FAILED(nsInitialize()))
+        fatalSimple(-2);
+    
+    if (R_FAILED(nsextInitialize()))
+        fatalSimple(-3);
+
+    if (R_FAILED(esInitialize()))
+        fatalSimple(-4);
+
     if (R_FAILED(rc))
         fatalSimple(-5);
 
@@ -87,6 +101,10 @@ int main(int argc, char **argv)
     socketExit();
     fontExit();
     plExit();
+    esExit();
+    nsextExit();
+    nsExit();
+    ncmExit();
     setsysExit();
 
     gfxExit();

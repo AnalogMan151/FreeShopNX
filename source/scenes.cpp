@@ -16,7 +16,7 @@ void titleScene(void)
 
     // BEWARE YE WHO ATTEMPTS DECIPHERING THIS AS THY MAY GO MAD
     int total_pages = (g_idoptions.size() == 0) ? 1 : (g_idoptions.size() / g_maxEntries) + ((g_idoptions.size() % g_maxEntries > 0) ? 1 : 0);
-    // YE IS SAFE TO OPEN THY EYES ONCE AGAIN
+    // THY IS SAFE TO OPEN THYNE EYES ONCE AGAIN
 
     sprintf(pages, "Page: %04i/%04i", ((g_idselected / g_maxEntries) + 1), total_pages);
     DrawText(fontSmall, 30, 704, themeCurrent.textColor, pages);
@@ -24,7 +24,7 @@ void titleScene(void)
     uint32_t rightX2;
     char btnConfig_top1[64];
     char btnConfig_top2[64];
-    sprintf(btnConfig_top1, FON_X " %s", (g_installLocation) ? "NAND" : "SD");
+    sprintf(btnConfig_top1, FON_X " %s", (g_storageID == FsStorageId_NandUser) ? "NAND" : "SD");
     sprintf(btnConfig_top2, FON_Y " Update List");
     GetTextDimensions(fontSmall, FON_X " NAND   " FON_Y " Update List", &rightX1, NULL);
     GetTextDimensions(fontSmall, btnConfig_top2, &rightX2, NULL);
@@ -137,10 +137,10 @@ void buttonX(void)
 {
     if (g_scene == TITLE_SCENE)
     {
-        if (g_installLocation == 0)
-            g_installLocation = 1;
+        if (g_storageID == FsStorageId_SdCard)
+            g_storageID = FsStorageId_NandUser;
         else
-            g_installLocation = 0;
+            g_storageID = FsStorageId_SdCard;
     }
 }
 

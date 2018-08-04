@@ -15,6 +15,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <math.h>
+#include <switch/arm/atomics.h>
 #include <switch.h>
 #include <stdint.h>
 #include <curl/curl.h>
