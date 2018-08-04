@@ -8,6 +8,7 @@ vector<u64> g_titleKeys_low;
 vector<string> g_rightsIDs;
 uint g_displayedTotal = 0;
 json g_infoJSON;
+json config;
 
 bool loadTitles(void)
 {
@@ -52,9 +53,8 @@ bool loadTitles(void)
                 g_titleKeys_high.push_back(titleKey1);
                 g_titleKeys_low.push_back(titleKey2);
                 g_idoptions.push_back(titleName);
-                g_displayedTotal += 1;
             }
-        titleListTXT.close();
+            titleListTXT.close();
         }
         if (!g_idoptions.size())
             return false;
@@ -81,6 +81,100 @@ bool loadInfo(void)
     }
     else
     {
+        return false;
+    }
+}
+
+bool loadConfig(void)
+{
+    ifstream configFile("sdmc:/switch/FreeShopNX/config.conf");
+    string line;
+    config.clear();
+
+    if (configFile.is_open())
+    {
+        while (configFile.good())
+        {
+            while (getline(configFile, line))
+            {
+                stringstream ss(line);
+                string configId, configVal;
+                getline(ss, configId, '=');
+                getline(ss, configVal, '=');
+                config[configId] = configVal;
+            }
+            configFile.close();
+        }
+        if (config.empty())
+            return false;
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool getUpdateList(void)
+{
+    CURL *curl;
+    CURLcode res;
+    FILE *titleList;
+
+    curl = curl_easy_init();
+    if (curl && loadConfig() && config.count("title_key_url"))
+    {
+        titleList = fopen("sdmc:/switch/FreeShopNX/FreeShopNX.txt", "wb");
+        curl_easy_setopt(curl, CURLOPT_URL, config["title_key_url"].get<string>().c_str());
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, titleList);
+
+        res = curl_easy_perform(curl);
+        if (res != CURLE_OK)
+        {
+            curl_easy_cleanup(curl);
+            fclose(titleList);
+            return false;
+        }
+        curl_easy_cleanup(curl);
+        fclose(titleList);
+        return true;
+    } 
+    else 
+    {
+        curl_easy_cleanup(curl);
+        return false;
+    }
+}
+
+bool getUpdateInfo(void)
+{
+    CURL *curl;
+    CURLcode res;
+    FILE *infoJSON;
+
+    curl = curl_easy_init();
+    if (curl && loadConfig() && config.count("title_info_url"))
+    {
+        infoJSON = fopen("sdmc:/switch/FreeShopNX/info.json", "wb");
+        curl_easy_setopt(curl, CURLOPT_URL, config["title_info_url"].get<string>().c_str());
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, infoJSON);
+
+        res = curl_easy_perform(curl);
+        if (res != CURLE_OK)
+        {
+            curl_easy_cleanup(curl);
+            fclose(infoJSON);
+            return false;
+        }
+        curl_easy_cleanup(curl);
+        fclose(infoJSON);
+        return true;
+    }
+    else
+    {
+        curl_easy_cleanup(curl);
         return false;
     }
 }

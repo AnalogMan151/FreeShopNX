@@ -13,7 +13,12 @@ void titleScene(void)
     DrawText(fontSmall, 1280 - rightX - 30, 704, themeCurrent.textColor, btnConfig_bot);
     printTitles();
     char pages[25];
-    sprintf(pages, "Page: %04i/%04i", ((g_idselected / g_maxEntries) + 1), ((g_displayedTotal / g_maxEntries) + ((g_displayedTotal % g_maxEntries > 0) ? 1 : 0)));
+
+    // BEWARE YE WHO ATTEMPTS DECIPHERING THIS AS THY MAY GO MAD
+    int total_pages = (g_idoptions.size() == 0) ? 1 : (g_idoptions.size() / g_maxEntries) + ((g_idoptions.size() % g_maxEntries > 0) ? 1 : 0);
+    // YE IS SAFE TO OPEN THY EYES ONCE AGAIN
+
+    sprintf(pages, "Page: %04i/%04i", ((g_idselected / g_maxEntries) + 1), total_pages);
     DrawText(fontSmall, 30, 704, themeCurrent.textColor, pages);
     uint32_t rightX1;
     uint32_t rightX2;
@@ -39,6 +44,7 @@ void infoScene(void)
 
 void updateScene(void)
 {
+    bool error = false;
     uint32_t rightX;
     char btnConfig_bot[] = "\uE140 Please wait...";
     GetTextDimensions(fontSmall, btnConfig_bot, &rightX, NULL);
@@ -47,10 +53,38 @@ void updateScene(void)
     gfxFlushBuffers();
     gfxSwapBuffers();
     gfxWaitForVsync();
-    svcSleepThread((u64)1000000000*5);
-    // updateCheck();
-    // g_titleLoaded = loadTitles();
+
     g_scene = TITLE_SCENE;
+
+    struct coord pos = {45, 96};
+
+    if (getUpdateList())
+    {
+        g_titlesLoaded = loadTitles();
+    }
+    else
+    {
+        pos = DrawText(fontLarge, 45, pos.y, themeCurrent.textColor, "Could not download updated list from server\nCheck config.conf or internet connection\n\n");
+        error = true;
+    }
+
+    if (getUpdateInfo())
+    {
+        g_infoLoaded = loadInfo();
+    }
+    else
+    {
+        pos = DrawText(fontLarge, 45, pos.y, themeCurrent.textColor, "Could not download updated info JSON from Server\nCheck config.conf or internet connection\n\n");
+        error = true;
+    }
+
+    if (error)
+    {
+        gfxFlushBuffers();
+        gfxSwapBuffers();
+        gfxWaitForVsync();
+        svcSleepThread((u64)1000000000*5);
+    }
 }
 
 void aboutScene(void)
@@ -117,11 +151,11 @@ void buttonUpDown(void)
             if (g_idselected > 0)
                 g_idselected -= 1;
             else
-                g_idselected = g_displayedTotal - 1;
+                g_idselected = g_idoptions.size() - 1;
         }
         if (kDown & KEY_DOWN)
         {
-            if (g_idselected < g_displayedTotal - 1)
+            if (g_idselected < g_idoptions.size() - 1)
                 g_idselected += 1;
             else
                 g_idselected = 0;
@@ -156,10 +190,10 @@ void buttonLeftRight(void)
         }
         if (kDown & KEY_RIGHT)
         {
-            if (g_idselected < g_displayedTotal - g_maxEntries)
+            if (g_idselected < g_idoptions.size() - g_maxEntries)
                 g_idselected += g_maxEntries;
             else
-                g_idselected = g_displayedTotal - 1;
+                g_idselected = g_idoptions.size() - 1;
         }
     }
 }
@@ -178,10 +212,10 @@ void buttonLR(void)
         }
         if (kDown & KEY_R)
         {
-            if (g_idselected < g_displayedTotal - g_maxEntries * 10)
+            if (g_idselected < g_idoptions.size() - g_maxEntries * 10)
                 g_idselected += g_maxEntries * 10;
             else
-                g_idselected = g_displayedTotal - 1;
+                g_idselected = g_idoptions.size() - 1;
         }
     }
 }

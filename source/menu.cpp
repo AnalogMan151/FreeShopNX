@@ -7,7 +7,6 @@ void printTitles(void)
     if (!g_titlesLoaded)
     {
         DrawText(fontLarge, 45, 96, themeCurrent.textColor, "Titles could not be loaded.\nCheck FreeShopNX.txt or press " FON_Y " to update from internet.");
-        g_displayedTotal = 1;
         g_maxEntries = 1;
         return;
     }
@@ -64,13 +63,13 @@ void printInfo(string rightsID)
     {
         if (g_infoJSON.count(rightsID))
         {
-            string title = g_infoJSON[rightsID]["title"].get<std::string>();
-            string release = g_infoJSON[rightsID]["release_date_string"].get<std::string>();
-            string category = g_infoJSON[rightsID]["category"].get<std::string>();
-            string esbr = g_infoJSON[rightsID]["esbr_rating"].get<std::string>();
-            string players = g_infoJSON[rightsID]["number_of_players"].get<std::string>();
-            string desc = g_infoJSON[rightsID]["intro"].get<std::string>() + "\n\n" + g_infoJSON[rightsID]["description"].get<std::string>();
-            string meta = "Release: " + release + " | Categories: " + category + " | Rating: " + esbr + " | Players: " + players;
+            string title = g_infoJSON[rightsID]["title"].get<string>();
+            string release = g_infoJSON[rightsID]["release_date_string"].get<string>();
+            string category = g_infoJSON[rightsID]["category"].get<string>();
+            string esrb = g_infoJSON[rightsID]["esrb_rating"].get<string>();
+            string players = g_infoJSON[rightsID]["number_of_players"].get<string>();
+            string desc = g_infoJSON[rightsID]["intro"].get<string>() + "\n\n" + g_infoJSON[rightsID]["description"].get<string>();
+            string meta = "Release: " + release + " | Categories: " + category + " | Rating: " + esrb + " | Players: " + players;
 
             stringstream infoString(desc);
             string infoLines;

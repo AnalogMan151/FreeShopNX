@@ -15,6 +15,7 @@ int main(int argc, char **argv)
     g_infoLoaded = loadInfo();
 
     gfxInitDefault();
+    socketInitializeDefault();
 
     appletSetScreenShotPermission(1);
 
@@ -81,6 +82,7 @@ int main(int argc, char **argv)
         gfxWaitForVsync();
     }
 
+    socketExit();
     fontExit();
     plExit();
     setsysExit();

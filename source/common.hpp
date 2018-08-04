@@ -17,6 +17,7 @@
 #include <math.h>
 #include <switch.h>
 #include <stdint.h>
+#include <curl/curl.h>
 using namespace std;
 
 extern bool g_titlesLoaded;
