@@ -42,6 +42,7 @@ typedef union {
 #include "scenes.hpp"
 #include "io.hpp"
 #include "menu.hpp"
+#include "install.hpp"
 #include "json.hpp"
 using json = nlohmann::json;
 

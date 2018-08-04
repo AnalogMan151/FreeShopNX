@@ -8,3 +8,5 @@ extern int g_totalInfoLines;
 
 void printTitles(void);
 void printInfo(string rightsID);
+void printAbout(void);
+void printInstall(void);

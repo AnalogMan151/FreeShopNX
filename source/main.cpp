@@ -75,6 +75,8 @@ int main(int argc, char **argv)
             updateScene();
         if (g_scene == ABOUT_SCENE)
             aboutScene();
+        if (g_scene == INSTALL_SCENE)
+            installScene();
 
         gfxFlushBuffers();
 

@@ -89,19 +89,31 @@ void updateScene(void)
 
 void aboutScene(void)
 {
+    printTitles();
+    printAbout();
     uint32_t rightX;
-    uint32_t centerX;
-    uint32_t centerY;
     char btnConfig_bot[] = FON_B " Back";
-    char aboutText[] = "Warning: You may be banned.\n\nCredits:\nAnalogMan, Adubbz, XorTroll, Reisyukaku, AmiiboUGC\nPanda, yellows8, megasharer";
     GetTextDimensions(fontSmall, btnConfig_bot, &rightX, NULL);
-    GetTextDimensions(fontMedium, aboutText, &centerX, &centerY);
-    DrawText(fontSmall, 1280 - rightX - 30, 704, themeCurrent.textColor, btnConfig_bot);
-    DrawText(fontMedium, ((1280-centerX)/2), ((720-centerY)/2), themeCurrent.textColor, aboutText);
+    DrawText(fontSmall, 1280 - rightX - 230, 704, themeCurrent.textColor, btnConfig_bot);
+}
+
+void installScene(void)
+{
+    printTitles();
+    printInstall();
+    uint32_t rightX;
+    char btnConfig_bot[] = FON_B " Back";
+    GetTextDimensions(fontSmall, btnConfig_bot, &rightX, NULL);
+    DrawText(fontSmall, 1280 - rightX - 230, 704, themeCurrent.textColor, btnConfig_bot);
 }
 
 void buttonA(void)
 {
+    if (g_scene == INFO_SCENE)
+    {
+        g_scene = INSTALL_SCENE;
+    }
+
     if (g_scene == TITLE_SCENE && g_titlesLoaded)
     {
         g_infoLine = 0;
@@ -115,6 +127,8 @@ void buttonB(void)
     if (g_scene == INFO_SCENE)
         g_scene = TITLE_SCENE;
     if (g_scene == ABOUT_SCENE)
+        g_scene = TITLE_SCENE;
+    if (g_scene == INSTALL_SCENE)
         g_scene = TITLE_SCENE;
 }
 

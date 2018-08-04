@@ -2,6 +2,29 @@
 
 uint g_maxEntries;
 
+void printSubMenu(void)
+{
+    for (int y = 0; y < 720; y++)
+    {
+        for (int x = 0; x < 1280; x++)
+        {
+            DrawPixel(x, y, themeCurrent.backgroundDim);
+        }
+    }
+    for (int y = 0; y < 720; y++)
+    {
+        for (int x = 200; x < 1080; x++)
+        {
+            DrawPixel(x, y, themeCurrent.backgroundColor);
+        }
+    }
+    for (int x = 230; x < 1050; x++)
+    {
+        DrawPixel(x, 54, themeCurrent.seperatorColor);
+        DrawPixel(x, 676, themeCurrent.seperatorColor);
+    }
+}
+
 void printTitles(void)
 {
     if (!g_titlesLoaded)
@@ -39,25 +62,7 @@ void printTitles(void)
 
 void printInfo(string rightsID)
 {
-    for (int y = 0; y < 720; y++)
-    {
-        for (int x = 0; x < 1280; x++)
-        {
-            DrawPixel(x, y, themeCurrent.backgroundDim);
-        }
-    }
-    for (int y = 0; y < 720; y++)
-    {
-        for (int x = 200; x < 1080; x++)
-        {
-            DrawPixel(x, y, themeCurrent.backgroundColor);
-        }
-    }
-    for (int x = 230; x < 1050; x++)
-    {
-        DrawPixel(x, 54, themeCurrent.seperatorColor);
-        DrawPixel(x, 676, themeCurrent.seperatorColor);
-    }
+    printSubMenu();
 
     if (g_infoLoaded)
     {
@@ -83,7 +88,7 @@ void printInfo(string rightsID)
             g_totalInfoLines = infoLineList.size();
 
             DrawText(fontLarge, 245, 46, themeCurrent.textColor, title.c_str());
-            DrawText(fontTiny, 250, 70, themeCurrent.textColor, meta.c_str());
+            DrawTextTruncateW(fontTiny, 250, 70, themeCurrent.textColor, meta.c_str(), 770, "...");
 
             uint32_t centerX;
             GetTextDimensions(fontSmall, desc.c_str(), &centerX, NULL);
@@ -107,4 +112,35 @@ void printInfo(string rightsID)
         GetTextDimensions(fontSmall, "Could not load info.json", &centerX, NULL);
         DrawText(fontSmall, (1280 - centerX) / 2, 120, themeCurrent.textColor, "Could not load info.json");
     }
+}
+
+void printAbout(void)
+{
+    printSubMenu();
+    DrawText(fontLarge, 245, 46, themeCurrent.textColor, "About");
+    uint32_t centerX;
+    char aboutText[] = "Warning: You may be banned.\n\nCredits:\n\nAnalogMan\nAdubbz\nXorTroll\nReisyukaku\nAmiiboUGC\nPanda\nyellows8\nmegasharer";
+    GetTextDimensions(fontSmall, aboutText, &centerX, NULL);
+    DrawText(fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, aboutText);
+}
+
+void printInstall(void)
+{
+    char header[8];
+    char text[100];
+    printSubMenu();
+    if (installTitle())
+    {
+        sprintf(header, "Install");
+        sprintf(text, "Title ID %016lx install started successfully!", g_titleIDs[g_idselected]);
+    }
+    else
+    {
+        sprintf(header, "Error");
+        sprintf(text, "Failed to begin install. Check that you have ES signature patching and that internet is enabled.");
+    }
+    DrawText(fontLarge, 245, 46, themeCurrent.textColor, header);
+    uint32_t centerX;
+    GetTextDimensions(fontSmall, text, &centerX, NULL);
+    DrawText(fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, text);
 }
