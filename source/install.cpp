@@ -173,6 +173,55 @@ Result nsDownloadApplication(u64 tid, u32 unk, u8 storageId)
     return rc;
 }
 
+unsigned long int byteswap(unsigned long int x)
+{
+    x = (x & 0x00000000FFFFFFFF) << 32 | (x & 0xFFFFFFFF00000000) >> 32;
+    x = (x & 0x0000FFFF0000FFFF) << 16 | (x & 0xFFFF0000FFFF0000) >> 16;
+    x = (x & 0x00FF00FF00FF00FF) << 8 | (x & 0xFF00FF00FF00FF00) >> 8;
+    return x;
+}
+
+Result installTikCert(u64 tid, u8 mkey, u64 tkeyh, u64 tkeyl)
+{
+    Result rc = 0;
+    int tikBuf_size = 704;
+    char *tikBuf = new char[tikBuf_size];
+    int certBuf_size = 1792;
+    char *certBuf = new char[certBuf_size];
+
+    tid = byteswap(tid);
+    tkeyh = byteswap(tkeyh);
+    tkeyl = byteswap(tkeyl);
+
+    ifstream tik("sdmc:/switch/FreeShopNX/Ticket.tik", ios::in | ios::binary);
+    if (tik.peek() == ifstream::traits_type::eof())
+    {
+        tik.close();
+        return -1;
+    }
+    tik.read(tikBuf, tikBuf_size);
+    tik.close();
+
+    ifstream cert("sdmc:/switch/FreeShopNX/Certificate.cert", ios::in | ios::binary);
+    if (cert.peek() == ifstream::traits_type::eof())
+    {
+        cert.close();
+        return -1;
+    }
+    cert.read(certBuf, certBuf_size);
+    cert.close();
+
+    // patch TIK with title data
+    memcpy(tikBuf + 0x180, &tkeyh, 8);
+    memcpy(tikBuf + 0x188, &tkeyl, 8);
+    memcpy(tikBuf + 0x286, &mkey, 1);
+    memcpy(tikBuf + 0x2A0, &tid, 8);
+    memcpy(tikBuf + 0x2AF, &mkey, 1);
+
+    rc = esImportTicket(tikBuf, tikBuf_size, certBuf, certBuf_size);
+    return rc;
+}
+
 bool installTitle(void)
 {
     // TODO: Implement Ticket+Cert install and begin download

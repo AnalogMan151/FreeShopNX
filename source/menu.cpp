@@ -68,8 +68,21 @@ void printInfo(string rightsID)
     {
         if (g_infoJSON.count(rightsID))
         {
+            if (!g_infoJSON[rightsID].count("title"))
+                g_infoJSON[rightsID]["title"] = "Could not load title";
+            if (!g_infoJSON[rightsID].count("release_date_string"))
+                g_infoJSON[rightsID]["release_date_string"] = "Unknown";
+            if (!g_infoJSON[rightsID].count("category"))
+                g_infoJSON[rightsID]["category"] = "Unknown";
+            if (!g_infoJSON[rightsID].count("esrb_rating"))
+                g_infoJSON[rightsID]["esrb_rating"] = "Unknown";
+            if (!g_infoJSON[rightsID].count("number_of_players"))
+                g_infoJSON[rightsID]["number_of_players"] = "Unkown";
             if (!g_infoJSON[rightsID].count("intro"))
                 g_infoJSON[rightsID]["intro"] = "";
+            if (!g_infoJSON[rightsID].count("description"))
+                g_infoJSON[rightsID]["description"] = "Could not load info";
+
             string title = g_infoJSON[rightsID]["title"].get<string>();
             string release = g_infoJSON[rightsID]["release_date_string"].get<string>();
             string category = g_infoJSON[rightsID]["category"].get<string>();
