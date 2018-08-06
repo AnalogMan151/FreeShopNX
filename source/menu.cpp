@@ -1,6 +1,7 @@
 #include "common.hpp"
 
 uint g_maxEntries;
+bool g_installStarted = false; 
 
 void printSubMenu(void)
 {
@@ -144,18 +145,22 @@ void printAbout(void)
 
 void printInstall(void)
 {
-    char header[8];
-    char text[100];
+    static char header[8];
+    static char text[150];
     printSubMenu();
-    if (installTitle())
+    if (!g_installStarted)
     {
-        sprintf(header, "Install");
-        sprintf(text, "Title ID %016lx install started successfully!", g_titleIDs[g_idselected]);
-    }
-    else
-    {
-        sprintf(header, "Error");
-        sprintf(text, "Failed to begin install. Check that you have ES signature patching and that internet is enabled.");
+        if (installTitle())
+        {
+            sprintf(header, "Install");
+            sprintf(text, "Title ID %016lx install started successfully!", g_titleIDs[g_idselected]);
+        }
+        else
+        {
+            sprintf(header, "Error");
+            sprintf(text, "Failed to begin install. Check that you have ES signature patching, that internet is enabled\nand that the title is not already downloading");
+        }
+        g_installStarted = true;
     }
     DrawText(fontLarge, 245, 46, themeCurrent.textColor, header);
     uint32_t centerX;

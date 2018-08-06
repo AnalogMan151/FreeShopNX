@@ -130,7 +130,10 @@ void buttonB(void)
     if (g_scene == ABOUT_SCENE)
         g_scene = TITLE_SCENE;
     if (g_scene == INSTALL_SCENE)
+    {
+        g_installStarted = false;
         g_scene = TITLE_SCENE;
+    }
 }
 
 void buttonX(void)

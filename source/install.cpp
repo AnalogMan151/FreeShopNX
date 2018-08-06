@@ -222,8 +222,23 @@ Result installTikCert(u64 tid, u8 mkey, u64 tkeyh, u64 tkeyl)
     return rc;
 }
 
+Result installTitle(u64 id)
+{
+    Result rc = 0;
+    rc = nsDownloadApplication(id, 0, g_storageID);
+    return rc;
+}
+
 bool installTitle(void)
 {
-    // TODO: Implement Ticket+Cert install and begin download
+    u64 tid = g_titleIDs[g_idselected];
+    u8 mkey = g_masterKeys[g_idselected];
+    u64 tkeyh = g_titleKeys_high[g_idselected];
+    u64 tkeyl = g_titleKeys_low[g_idselected];
+
+    if (R_FAILED(installTikCert(tid, mkey, tkeyh, tkeyl)))
+        return false;
+    if (R_FAILED(installTitle(tid)))
+        return false;
     return true;
 }
