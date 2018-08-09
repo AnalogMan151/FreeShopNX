@@ -50,29 +50,6 @@ int main(int argc, char **argv)
 
     while (appletMainLoop())
     {
-        hidScanInput();
-
-        u32 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-
-        if (kDown & KEY_PLUS)
-            break;
-        if (kDown & KEY_A)
-            buttonA();
-        if (kDown & KEY_B)
-            buttonB();
-        if (kDown & KEY_X)
-            buttonX();
-        if (kDown & KEY_Y)
-            buttonY();
-        if (kDown & KEY_MINUS)
-            buttonMinus();
-        if (kDown & KEY_UP || kDown & KEY_DOWN)
-            buttonUpDown();
-        if (kDown & KEY_LEFT || kDown & KEY_RIGHT)
-            buttonLeftRight();
-        if (kDown & KEY_L || kDown & KEY_R)
-            buttonLR();
-
         g_framebuf = gfxGetFramebuffer(&g_framebuf_width, NULL);
         memset(g_framebuf, 237, gfxGetFramebufferSize());
 
@@ -96,6 +73,29 @@ int main(int argc, char **argv)
 
         gfxSwapBuffers();
         gfxWaitForVsync();
+
+        hidScanInput();
+
+        u32 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
+
+        if (kDown & KEY_PLUS)
+            break;
+        if (kDown & KEY_A)
+            buttonA();
+        if (kDown & KEY_B)
+            buttonB();
+        if (kDown & KEY_X)
+            buttonX();
+        if (kDown & KEY_Y)
+            buttonY();
+        if (kDown & KEY_MINUS)
+            buttonMinus();
+        if (kDown & KEY_UP || kDown & KEY_DOWN)
+            buttonUpDown();
+        if (kDown & KEY_LEFT || kDown & KEY_RIGHT)
+            buttonLeftRight();
+        if (kDown & KEY_L || kDown & KEY_R)
+            buttonLR();
     }
 
     socketExit();
