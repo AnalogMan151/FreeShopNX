@@ -130,13 +130,13 @@ void printInfo(string rightsID)
             string size_string;
             if (g_infoJSON[rightsID]["size"].is_number())
             {
-                if (g_infoJSON[rightsID]["size"].is_null())
+                if (g_infoJSON[rightsID]["size"].is_null() || g_infoJSON[rightsID]["size"].get<uint64_t>() == 0)
                 {
                     size_string = "Unknown";
                 }
                 else
                 {
-                    double size = (g_infoJSON[rightsID]["size"].get<int>());
+                    double size = (g_infoJSON[rightsID]["size"].get<uint64_t>());
                     ostringstream friendly_size;
                     friendly_size << fixed << setprecision(2);
                     size /= 1024*1024;
