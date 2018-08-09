@@ -161,35 +161,37 @@ void buttonMinus(void)
 
 void buttonUpDown(void)
 {
-    u32 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
+    u32 kHeld = hidKeysHeld(CONTROLLER_P1_AUTO);
     if (g_scene == TITLE_SCENE && g_titlesLoaded)
     {
-        if (kDown & KEY_UP)
+        if (kHeld & KEY_UP)
         {
             if (g_idselected > 0)
                 g_idselected -= 1;
             else
                 g_idselected = g_idoptions.size() - 1;
+            svcSleepThread(200000000);
         }
-        if (kDown & KEY_DOWN)
+        if (kHeld & KEY_DOWN)
         {
             if (g_idselected < g_idoptions.size() - 1)
                 g_idselected += 1;
             else
                 g_idselected = 0;
+            svcSleepThread(200000000);
         }
     }
     if (g_scene == INFO_SCENE)
     {
-        if (kDown & KEY_UP)
+        if (kHeld & KEY_UP)
         {
-            if (g_infoLine - g_infoPageLines >= 0)
-                g_infoLine -= g_infoPageLines;
+            if (g_infoLine > 0)
+                g_infoLine -= 1;
         }
-        if (kDown & KEY_DOWN)
+        if (kHeld & KEY_DOWN)
         {
-            if (g_infoLine + g_infoPageLines < g_totalInfoLines - 1)
-                g_infoLine += g_infoPageLines;
+            if (g_infoLine + g_infoPageLines < g_totalInfoLines + 1)
+                g_infoLine += 1;
         }
     }
 }

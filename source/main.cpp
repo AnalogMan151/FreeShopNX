@@ -77,6 +77,7 @@ int main(int argc, char **argv)
         hidScanInput();
 
         u32 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
+        u32 kHeld = hidKeysHeld(CONTROLLER_P1_AUTO);
 
         if (kDown & KEY_PLUS)
             break;
@@ -90,7 +91,7 @@ int main(int argc, char **argv)
             buttonY();
         if (kDown & KEY_MINUS)
             buttonMinus();
-        if (kDown & KEY_UP || kDown & KEY_DOWN)
+        if (kHeld & KEY_UP || kHeld & KEY_DOWN)
             buttonUpDown();
         if (kDown & KEY_LEFT || kDown & KEY_RIGHT)
             buttonLeftRight();
