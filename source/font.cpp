@@ -248,6 +248,7 @@ string WrapText(u32 font, const char *text, uint32_t max_width)
     {
         glyph_t glyph;
         uint32_t codepoint = DecodeUTF8(&text);
+        uint8_t codepoint_size = getUTF8size(codepoint);
 
         if (!FontLoadGlyph(&glyph, font, codepoint))
         {
@@ -256,7 +257,7 @@ string WrapText(u32 font, const char *text, uint32_t max_width)
         }
 
         width += glyph.advance;
-        if (getUTF8size(codepoint) == 3)
+        if (codepoint_size == 3)
             disableWordWrap = true;
 
         if (codepoint == '\n')
@@ -274,7 +275,7 @@ string WrapText(u32 font, const char *text, uint32_t max_width)
             word.clear();
             continue;
         }
-        if (getUTF8size(codepoint) != 3 && disableWordWrap)
+        if (codepoint_size != 3 && disableWordWrap)
         {
             line += word;
             word.clear();
@@ -282,7 +283,7 @@ string WrapText(u32 font, const char *text, uint32_t max_width)
         }
         if (width < max_width)
         {
-            for (uint8_t i = getUTF8size(codepoint); i > 0; i--)
+            for (uint8_t i = codepoint_size; i > 0; i--)
             {
                 word += (uint8_t) * (text - i);
             }
@@ -290,25 +291,21 @@ string WrapText(u32 font, const char *text, uint32_t max_width)
         }
         else
         {
-            if (getUTF8size(codepoint) == 3)
+            if (codepoint_size == 3)
             {
                 line += word + '\n';
                 result += line;
                 text -= 3;
-                width = 0;
-                word.clear();
-                line.clear();
-                continue;
             }
             else
             {
                 result += line + '\n';
-                text -= word.length() + 1;
-                width = 0;
-                word.clear();
-                line.clear();
-                continue;
+                text -= word.length() + codepoint_size;
             }
+            width = 0;
+            word.clear();
+            line.clear();
+            continue;
         }
     }
     result += line + word;
