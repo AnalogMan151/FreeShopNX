@@ -217,6 +217,104 @@ static uint DrawText_(u32 font, uint32_t x, uint32_t y, color_t clr, const char 
     return current_line;
 }
 
+static uint8_t getUTF8size(uint32_t codepoint)
+{
+    if (codepoint >= 0x00000000 && codepoint <= 0x0000007F)
+        return 1;
+    if (codepoint >= 0x00000080 && codepoint <= 0x000007FF)
+        return 2;
+    if (codepoint >= 0x00000800 && codepoint <= 0x0000FFFF)
+        return 3;
+    if (codepoint >= 0x00010000 && codepoint <= 0x001FFFFF)
+        return 4;
+    return 0;
+}
+
+string WrapText(u32 font, const char *text, uint32_t max_width)
+{
+    string word = "";
+    string line = "";
+    string result = "";
+    uint32_t width = 0;
+    bool disableWordWrap = false;
+
+    if (s_font_faces_total == 0)
+        return 0;
+    if (!FontSetType(font))
+        return 0;
+    s_font_lastusedface = s_font_faces[0];
+
+    while (*text)
+    {
+        glyph_t glyph;
+        uint32_t codepoint = DecodeUTF8(&text);
+
+        if (!FontLoadGlyph(&glyph, font, codepoint))
+        {
+            if (!FontLoadGlyph(&glyph, font, '?'))
+                continue;
+        }
+
+        width += glyph.advance;
+        if (getUTF8size(codepoint) == 3)
+            disableWordWrap = true;
+
+        if (codepoint == '\n')
+        {
+            line += word + '\n';
+            result += line;
+            width = 0;
+            word.clear();
+            line.clear();
+            continue;
+        }
+        if (codepoint == ' ')
+        {
+            line += word + ' ';
+            word.clear();
+            continue;
+        }
+        if (getUTF8size(codepoint) != 3 && disableWordWrap)
+        {
+            line += word;
+            word.clear();
+            disableWordWrap = false;
+        }
+        if (width < max_width)
+        {
+            for (uint8_t i = getUTF8size(codepoint); i > 0; i--)
+            {
+                word += (uint8_t) * (text - i);
+            }
+            continue;
+        }
+        else
+        {
+            if (getUTF8size(codepoint) == 3)
+            {
+                line += word + '\n';
+                result += line;
+                text -= 3;
+                width = 0;
+                word.clear();
+                line.clear();
+                continue;
+            }
+            else
+            {
+                result += line + '\n';
+                text -= word.length() + 1;
+                width = 0;
+                word.clear();
+                line.clear();
+                continue;
+            }
+        }
+    }
+    result += line + word;
+    return result;
+}
+
 struct coord DrawText(u32 font, uint32_t x, uint32_t y, color_t clr, const char *text)
 {
     DrawText_(font, x, y, clr, text, 0, 0, 0, NULL);

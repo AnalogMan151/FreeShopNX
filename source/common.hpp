@@ -109,6 +109,7 @@ struct coord DrawText(u32 font, uint32_t x, uint32_t y, color_t clr, const char*
 struct coord DrawTextTruncateW(u32 font, uint32_t x, uint32_t y, color_t clr, const char* text, uint32_t max_width, const char* end_text);
 int DrawTextTruncateH(u32 font, uint32_t x, uint32_t y, color_t clr, const char *text, int start_line, uint32_t max_height, const char *end_text);
 void GetTextDimensions(u32 font, const char* text, uint32_t* width_out, uint32_t* height_out);
+string WrapText(u32 font, const char *text, uint32_t max_width);
 
 bool fontInitialize(void);
 void fontExit();
