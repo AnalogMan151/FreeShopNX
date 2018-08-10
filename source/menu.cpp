@@ -221,7 +221,17 @@ void printAbout(void)
     printSubMenu();
     DrawText(fontLarge, 245, 46, themeCurrent.textColor, "About");
     uint32_t centerX;
-    char aboutText[] = "Warning: You may be banned.\n\nCredits:\n\nAnalogMan\nAdubbz\nXorTroll\nReisyukaku\nAmiiboUGC\nPanda\nyellows8\nmegasharer";
+    char aboutText[] = "Warning: You may be banned.\n\n"
+                       "Credits:\n\n"
+
+                       "  \u2022 AnalogMan - Lead Developer\n\n"
+                       "  \u2022 Adubbz - nsext and es code from TinFoil\n\n"
+                       "  \u2022 XorTroll - Initial eNXhop code\n\n"
+                       "  \u2022 Reisyukaku - Initial idea from BogInstaller\n\n"
+                       "  \u2022 AmiiboUGC - Icon\n\n"
+                       "  \u2022 Panda - Scraped eShop data & updater code\n\n"
+                       "  \u2022 yellows8 - HBMenu shared font code and theming code\n\n"
+                       "  \u2022 megasharer - Resource acquisition";
     GetTextDimensions(fontSmall, aboutText, &centerX, NULL);
     DrawText(fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, aboutText);
 }
@@ -229,7 +239,7 @@ void printAbout(void)
 void printInstall(void)
 {
     static char header[8];
-    static char text[150];
+    static char text[160];
     printSubMenu();
     if (!g_installStarted)
     {
@@ -241,7 +251,8 @@ void printInstall(void)
         else
         {
             sprintf(header, "Error");
-            sprintf(text, "Failed to begin install. Check that you have ES signature patching, that internet is enabled\nand that the title is not already downloading");
+            sprintf(text, "Failed to begin install. Check that you have ES signature patching, that internet is enabled\n"
+                          "and that the title is not already downloading or installed.");
         }
         g_installStarted = true;
     }

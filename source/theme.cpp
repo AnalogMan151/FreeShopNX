@@ -9,7 +9,7 @@ void themeStartup(ThemePreset preset) {
                 .textColor = MakeColor(0, 0, 0, 255),
                 .selectedColor = MakeColor(0, 195, 227, 255),
                 .backgroundColor = MakeColor(233, 236, 241, 255),
-                .backgroundDim = MakeColor(255, 255, 255, 192),
+                .backgroundDim = MakeColor(0, 0, 0, 192),
                 .highlightColor = MakeColor(223, 226, 231, 255),
                 .seperatorColor = MakeColor(0, 0, 0, 255),
             };
