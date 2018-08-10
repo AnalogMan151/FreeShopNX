@@ -22,11 +22,13 @@ bool loadTitles(void)
 
     if (titleListTXT.is_open())
     {
+        g_idoptions.clear();
         g_titleIDs.clear();
         g_masterKeys.clear();
         g_titleKeys_high.clear();
         g_titleKeys_low.clear();
-        g_idoptions.clear();
+        g_rightsIDs.clear();
+        
         while (titleListTXT.good())
         {
             while (getline(titleListTXT, line))
