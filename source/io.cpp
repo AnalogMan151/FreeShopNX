@@ -28,7 +28,7 @@ bool loadTitles(void)
         g_titleKeys_high.clear();
         g_titleKeys_low.clear();
         g_rightsIDs.clear();
-        
+
         while (titleListTXT.good())
         {
             while (getline(titleListTXT, line))
@@ -85,6 +85,10 @@ bool loadInfo(void)
     {
         if (infoFile.good())
         {
+            string line;
+            getline(infoFile, line);
+            if (line != "{")
+                return false;
             infoFile >> g_infoJSON;
             infoFile.close();
             return true;

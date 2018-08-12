@@ -74,7 +74,7 @@ This file can be auto-generated using the python3 script here: https://gitlab.co
 title_info_url=http://...
 title_key_url=http://...
 ```
-Note that the Switch's libCurl implementation does not currently support HTTPS URLs, so only HTTP addresses can be downloaded from at the moment. 
+`title_info_url` for the info.json file and `title_key_info` for the FreeShopNX.txt file. Note that the Switch's libCurl implementation does not currently support HTTPS URLs, so only HTTP addresses can be downloaded from at the moment. 
 \
 \
 \
