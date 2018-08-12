@@ -85,10 +85,17 @@ bool loadInfo(void)
     {
         if (infoFile.good())
         {
-            string line;
-            getline(infoFile, line);
-            if (line != "{")
+            try
+            {
+                string str((istreambuf_iterator<char>(infoFile)), istreambuf_iterator<char>());
+                infoFile.seekg(0, ios_base::beg);
+                json::parse(str);
+            }
+            catch (exception& e)
+            {
+                infoFile.close();
                 return false;
+            }
             infoFile >> g_infoJSON;
             infoFile.close();
             return true;
