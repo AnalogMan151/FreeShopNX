@@ -13,13 +13,9 @@ Screenshots:
 Requirements:
 * Sig Patches
 * `sdmc:/switch/FreeShopNX/FreeShopNX.nro`
-* `sdmc:/switch/FreeShopNX/Ticket.tik`
-* `sdmc:/switch/FreeShopNX/Certificate.cert`
 * `sdmc:/switch/FreeShopNX/FreeShopNX.txt`
 * `sdmc:/switch/FreeShopNX/info.json`
 * `sdmc:/switch/FreeShopNX/config.conf`
-
-`Ticket.tik` and `Certificate.cert` are not supplied in this repo, you will need to track them down and obtain them yourself. They are the same ones used in CDNSP. 
 \
 \
 \
