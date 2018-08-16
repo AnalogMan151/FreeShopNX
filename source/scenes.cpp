@@ -44,8 +44,17 @@ void infoScene(void)
 
 void updateScene(void)
 {
-    bool error = false;
     uint32_t rightX;
+    if (!g_changelog.empty())
+    {
+        char btnConfig_bot[] = FON_UP FON_DN " Scroll   " FON_B " Back";
+        GetTextDimensions(fontSmall, btnConfig_bot, &rightX, NULL);
+        printChangelog();
+        DrawText(fontSmall, 1280 - rightX - 230, 704, themeCurrent.textColor, btnConfig_bot);
+        return;
+    }
+
+    bool error = false;
     char btnConfig_bot[] = "\uE140 Please wait...";
     GetTextDimensions(fontSmall, btnConfig_bot, &rightX, NULL);
     DrawText(fontSmall, 1280 - rightX - 30, 704, themeCurrent.textColor, btnConfig_bot);
@@ -53,8 +62,6 @@ void updateScene(void)
     gfxFlushBuffers();
     gfxSwapBuffers();
     gfxWaitForVsync();
-
-    g_scene = TITLE_SCENE;
 
     struct coord pos = {45, 96};
 
@@ -86,6 +93,9 @@ void updateScene(void)
         svcSleepThread((u64)1000000000*5);
     }
     g_idselected = 0;
+    if (g_changelog.empty())
+        g_scene = TITLE_SCENE;
+
 }
 
 void aboutScene(void)
@@ -132,6 +142,11 @@ void buttonB(void)
     if (g_scene == INSTALL_SCENE)
     {
         g_installStarted = false;
+        g_scene = TITLE_SCENE;
+    }
+    if (g_scene == UPDATE_SCENE && !g_changelog.empty())
+    {
+        g_changelog.clear();
         g_scene = TITLE_SCENE;
     }
 }
@@ -181,7 +196,7 @@ void buttonUpDown(void)
             svcSleepThread(200000000);
         }
     }
-    if (g_scene == INFO_SCENE)
+    if (g_scene == INFO_SCENE || (g_scene == UPDATE_SCENE && !g_changelog.empty()))
     {
         if (kHeld & KEY_UP)
         {

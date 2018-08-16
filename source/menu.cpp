@@ -195,9 +195,9 @@ void printInfo(string rightsID)
             uint32_t centerX;
             GetTextDimensions(fontSmall, desc.c_str(), &centerX, NULL);
             if (!g_infoPageLines)
-                g_infoPageLines = DrawTextTruncateH(fontSmall, 250, 120, themeCurrent.textColor, desc.c_str(), 0, 530, "(cont.)");
+                g_infoPageLines = DrawTextTruncateH(fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, desc.c_str(), 0, 530, "(cont.)");
             else
-                DrawTextTruncateH(fontSmall, 250, 120, themeCurrent.textColor, desc.c_str(), g_infoLine, 530, "(cont.)");
+                DrawTextTruncateH(fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, desc.c_str(), g_infoLine, 530, "(cont.)");
         }
         else
         {
@@ -260,4 +260,27 @@ void printInstall(void)
     uint32_t centerX;
     GetTextDimensions(fontSmall, text, &centerX, NULL);
     DrawText(fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, text);
+}
+
+void printChangelog(void)
+{
+    printSubMenu();
+    DrawText(fontLarge, 245, 46, themeCurrent.textColor, "Changelog");
+    stringstream infoString(g_changelog);
+    string infoLines;
+    vector<string> infoLineList;
+
+    while (getline(infoString, infoLines, '\n'))
+    {
+        infoLineList.push_back(infoLines);
+    }
+
+    g_totalInfoLines = infoLineList.size();
+
+    uint32_t centerX;
+    GetTextDimensions(fontSmall, g_changelog.c_str(), &centerX, NULL);
+    if (!g_infoPageLines)
+        g_infoPageLines = DrawTextTruncateH(fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, g_changelog.c_str(), 0, 530, "(cont.)");
+    else
+        DrawTextTruncateH(fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, g_changelog.c_str(), g_infoLine, 530, "(cont.)");
 }

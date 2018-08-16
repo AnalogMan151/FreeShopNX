@@ -6,6 +6,7 @@ extern vector<u8> g_masterKeys;
 extern vector<u64> g_titleKeys_high;
 extern vector<u64> g_titleKeys_low;
 extern vector<string> g_rightsIDs;
+extern string g_changelog;
 
 bool loadTitles(void);
 bool loadInfo(void);

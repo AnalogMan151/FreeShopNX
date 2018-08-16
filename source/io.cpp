@@ -1,14 +1,26 @@
 #include "common.hpp"
 
 vector<string> g_idoptions;
+vector<string> idoptions_old;
 vector<u64> g_titleIDs;
 vector<u8> g_masterKeys;
 vector<u64> g_titleKeys_high;
 vector<u64> g_titleKeys_low;
 vector<string> g_rightsIDs;
+string g_changelog;
 uint g_displayedTotal = 0;
 json g_infoJSON;
 json config;
+
+bool isInList(string item, vector<string> list)
+{
+    for (size_t i = 0; i < list.size(); i++)
+    {
+        if (item == list[i])
+            return true;
+    }
+    return false;
+}
 
 bool loadTitles(void)
 {
@@ -22,6 +34,7 @@ bool loadTitles(void)
 
     if (titleListTXT.is_open())
     {
+        idoptions_old = g_idoptions;
         g_idoptions.clear();
         g_titleIDs.clear();
         g_masterKeys.clear();
@@ -64,6 +77,38 @@ bool loadTitles(void)
         }
         if (!g_idoptions.size())
             return false;
+
+        g_changelog.clear();
+        if (!idoptions_old.empty())
+        {
+            bool newGames = false;
+            bool removedGames = false;
+            for (size_t i = 0; i < g_idoptions.size(); i++)
+            {
+                if (!isInList(g_idoptions[i], idoptions_old))
+                {
+                    if (!newGames)
+                    {
+                        g_changelog += "New games:\n\n";
+                        newGames = true;
+                    }
+                    g_changelog += g_idoptions[i] + "\n";
+                }
+            }
+            for (size_t i = 0; i < idoptions_old.size(); i++)
+            {
+                if (!isInList(idoptions_old[i], g_idoptions))
+                {
+                    if (!removedGames)
+                    {
+                        g_changelog += "\nRemoved games:\n\n";
+                        removedGames = true;
+                    }
+                    g_changelog += idoptions_old[i] + "\n";
+                }
+            }
+        }
+
         return true;
     }
     else
