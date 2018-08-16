@@ -24,12 +24,9 @@ bool isInList(string item, vector<string> list)
 
 bool loadTitles(void)
 {
-    ifstream titleListTXT("sdmc:/switch/FreeShopNX/FreeShopNX.txt");
-    if (titleListTXT.peek() == ifstream::traits_type::eof())
-    {
-        titleListTXT.close();
+    if (!ifstream("sdmc:/switch/FreeShopNX/FreeShopNX.txt"))
         return false;
-    }
+    ifstream titleListTXT("sdmc:/switch/FreeShopNX/FreeShopNX.txt");
     string line;
 
     if (titleListTXT.is_open())
@@ -119,13 +116,9 @@ bool loadTitles(void)
 
 bool loadInfo(void)
 {
-    ifstream infoFile("sdmc:/switch/FreeShopNX/info.json");
-    if (infoFile.peek() == ifstream::traits_type::eof())
-    {
-        infoFile.close();
+    if (!ifstream("sdmc:/switch/FreeShopNX/info.json"))
         return false;
-    }
-
+    ifstream infoFile("sdmc:/switch/FreeShopNX/info.json");
     if (infoFile.is_open())
     {
         if (infoFile.good())
@@ -152,12 +145,14 @@ bool loadInfo(void)
 
 bool loadConfig(void)
 {
-    ifstream configFile("sdmc:/switch/FreeShopNX/config.conf");
-    if (configFile.peek() == ifstream::traits_type::eof())
+    if (!ifstream("sdmc:/switch/FreeShopNX/config.conf"))
     {
+        fstream configFile("sdmc:/switch/FreeShopNX/config.conf", ios::out);
+        configFile << "title_info_url=\n";
+        configFile << "title_key_url=";
         configFile.close();
-        return false;
     }
+    ifstream configFile("sdmc:/switch/FreeShopNX/config.conf");
     string line;
     config.clear();
 
