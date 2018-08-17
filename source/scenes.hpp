@@ -21,3 +21,4 @@ void buttonMinus(void);
 void buttonUpDown(void);
 void buttonLeftRight(void);
 void buttonLR(void);
+void buttonLStick(void);

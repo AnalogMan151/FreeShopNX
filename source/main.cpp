@@ -4,6 +4,7 @@ uint8_t *g_framebuf;
 u32 g_framebuf_width;
 int g_scene;
 uint g_idselected = 0;
+SortOrder g_sort = NAME_ASC;
 bool g_titlesLoaded = false;
 bool g_infoLoaded = false;
 FsStorageId g_storageID = FsStorageId_SdCard;
@@ -12,8 +13,8 @@ int main(int argc, char **argv)
 {
     Result rc = 0;
     g_scene = TITLE_SCENE;
-    g_titlesLoaded = loadTitles();
     g_infoLoaded = loadInfo();
+    g_titlesLoaded = loadTitles();
 
     gfxInitDefault();
     socketInitializeDefault();
@@ -97,6 +98,8 @@ int main(int argc, char **argv)
             buttonLeftRight();
         if (kDown & KEY_L || kDown & KEY_R)
             buttonLR();
+        if (kDown & KEY_LSTICK)
+            buttonLStick();
     }
 
     socketExit();

@@ -19,6 +19,7 @@
 #include <switch.h>
 #include <stdint.h>
 #include <curl/curl.h>
+#include <climits>
 using namespace std;
 
 extern bool g_titlesLoaded;

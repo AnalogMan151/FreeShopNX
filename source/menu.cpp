@@ -42,19 +42,19 @@ void printTitles(void)
     g_maxEntries = 562 / maxHeight;
 
     uint start = (g_idselected / g_maxEntries) * g_maxEntries;
-    uint end = (start + g_maxEntries > g_idoptions.size()) ? g_idoptions.size() : start + g_maxEntries;
+    uint end = (start + g_maxEntries > g_titleList.size()) ? g_titleList.size() : start + g_maxEntries;
 
     struct coord pos = {45, 96};
 
     for (uint j = start; j < end; j++)
     {
         if (j == g_idselected)
-            DrawText(fontMedium, pos.x, pos.y, themeCurrent.selectedColor, g_idoptions[j].c_str());
+            DrawText(fontMedium, pos.x, pos.y, themeCurrent.selectedColor, g_titleList[j].name.c_str());
         else
-            DrawText(fontMedium, pos.x, pos.y, themeCurrent.textColor, g_idoptions[j].c_str());
-        GetTextDimensions(fontMedium, g_idoptions[j].c_str(), NULL, &textHeight);
+            DrawText(fontMedium, pos.x, pos.y, themeCurrent.textColor, g_titleList[j].name.c_str());
+        GetTextDimensions(fontMedium, g_titleList[j].name.c_str(), NULL, &textHeight);
         char buf[64];
-        sprintf(buf, "Title ID: %016lx", g_titleIDs[j]);
+        sprintf(buf, "Title ID: %016lx  |  %s", g_titleList[j].titleID, g_titleList[j].size_string.c_str());
         pos.y += textHeight - 20;
         DrawText(fontTiny, pos.x+30, pos.y, themeCurrent.textColor, buf);
         pos.y += 50;
@@ -86,8 +86,6 @@ void printInfo(string rightsID)
                 g_infoJSON[rightsID]["intro"] = "";
             if (!g_infoJSON[rightsID].count("description"))
                 g_infoJSON[rightsID]["description"] = "Could not load info";
-            if (!g_infoJSON[rightsID].count("size"))
-                g_infoJSON[rightsID]["size"] = NULL;
             if (!g_infoJSON[rightsID].count("languages"))
                 g_infoJSON[rightsID]["languages"] = {};
 
@@ -127,31 +125,6 @@ void printInfo(string rightsID)
                 languages = "Error";
             }
 
-            string size_string;
-            if (g_infoJSON[rightsID]["size"].is_number())
-            {
-                if (g_infoJSON[rightsID]["size"].is_null() || g_infoJSON[rightsID]["size"].get<uint64_t>() == 0)
-                {
-                    size_string = "Unknown";
-                }
-                else
-                {
-                    double size = (g_infoJSON[rightsID]["size"].get<uint64_t>());
-                    ostringstream friendly_size;
-                    friendly_size << fixed << setprecision(2);
-                    size /= 1024*1024;
-                    if (size < 1024)
-                        friendly_size << size << " MiB";
-                    else
-                        friendly_size << size/1024 << " GiB";
-                    size_string = friendly_size.str();
-                }
-            }
-            else
-            {
-                size_string = "Error";
-            }
-
             if (g_infoJSON[rightsID]["title"].is_string())
                 title = g_infoJSON[rightsID]["title"].get<string>();
             else
@@ -176,7 +149,7 @@ void printInfo(string rightsID)
                 desc = "Error";
             desc += "\n\n\nLanguages: " + languages;
             desc = WrapText(fontSmall, desc.c_str(), 750);
-            string meta = "Release: " + release + " | Size: " + size_string + " | Categories: " + category + " | Players: " + players;
+            string meta = "Release: " + release + " | Categories: " + category + " | Players: " + players;
 
             stringstream infoString(desc);
             string infoLines;
@@ -246,7 +219,7 @@ void printInstall(void)
         if (installTitle())
         {
             sprintf(header, "Install");
-            sprintf(text, "Title ID %016lx install started successfully!", g_titleIDs[g_idselected]);
+            sprintf(text, "Title ID %016lx install started successfully!", g_titleList[g_idselected].titleID);
         }
         else
         {

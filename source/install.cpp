@@ -264,10 +264,10 @@ Result installTitle(u64 id)
 
 bool installTitle(void)
 {
-    u64 tid = g_titleIDs[g_idselected];
-    u8 mkey = g_masterKeys[g_idselected];
-    u64 tkeyh = g_titleKeys_high[g_idselected];
-    u64 tkeyl = g_titleKeys_low[g_idselected];
+    u64 tid = g_titleList[g_idselected].titleID;
+    u8 mkey = g_titleList[g_idselected].mKey;
+    u64 tkeyh = g_titleList[g_idselected].titleKeyUpper;
+    u64 tkeyl = g_titleList[g_idselected].titleKeyLower;
 
     if (R_FAILED(installTikCert(tid, mkey, tkeyh, tkeyl)))
         return false;

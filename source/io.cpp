@@ -1,22 +1,63 @@
 #include "common.hpp"
 
-vector<string> g_idoptions;
-vector<string> idoptions_old;
-vector<u64> g_titleIDs;
-vector<u8> g_masterKeys;
-vector<u64> g_titleKeys_high;
-vector<u64> g_titleKeys_low;
-vector<string> g_rightsIDs;
 string g_changelog;
 uint g_displayedTotal = 0;
 json g_infoJSON;
 json config;
+vector<Title> g_titleList;
+vector<Title> titleListOld;
 
-bool isInList(string item, vector<string> list)
+bool sorter(Title const &lhs, Title const &rhs)
+{
+    if (g_sort == RELEASE_DATE_DEC)
+    {
+        if (lhs.releaseDate == rhs.releaseDate)
+            return lhs.name < rhs.name;
+        return lhs.releaseDate > rhs.releaseDate;
+    }
+    if (g_sort == ADDED_DATE_DEC)
+    {
+        if (lhs.addedDate == rhs.addedDate)
+            return lhs.name < rhs.name;
+        return lhs.addedDate > rhs.addedDate;
+    }
+    if (g_sort == RELEASE_DATE_ASC)
+    {
+        if (lhs.releaseDate == rhs.releaseDate)
+            return lhs.name < rhs.name;
+        return lhs.releaseDate < rhs.releaseDate;
+    }
+    if (g_sort == ADDED_DATE_ASC)
+    {
+        if (lhs.addedDate == rhs.addedDate)
+            return lhs.name < rhs.name;
+        return lhs.addedDate < rhs.addedDate;
+    }
+    if (g_sort == SIZE_DEC)
+    {
+        if (lhs.size == rhs.size)
+            return lhs.name < rhs.name;
+        return lhs.size > rhs.size;
+    }
+    if (g_sort == SIZE_ASC)
+    {
+        if (lhs.size == rhs.size)
+            return lhs.name < rhs.name;
+        return lhs.size < rhs.size;
+    }
+    if (g_sort == NAME_DEC)
+    {
+        return lhs.name > rhs.name;
+    }
+    return lhs.name < rhs.name;
+    
+}
+
+bool isInList(string item, vector<Title> list)
 {
     for (size_t i = 0; i < list.size(); i++)
     {
-        if (item == list[i])
+        if (item == list[i].name)
             return true;
     }
     return false;
@@ -31,13 +72,8 @@ bool loadTitles(void)
 
     if (titleListTXT.is_open())
     {
-        idoptions_old = g_idoptions;
-        g_idoptions.clear();
-        g_titleIDs.clear();
-        g_masterKeys.clear();
-        g_titleKeys_high.clear();
-        g_titleKeys_low.clear();
-        g_rightsIDs.clear();
+        titleListOld = g_titleList;
+        g_titleList.clear();
 
         while (titleListTXT.good())
         {
@@ -59,53 +95,87 @@ bool loadTitles(void)
                 u8 masterKey = stoul(s_rightsID.substr(16, 32).c_str(), NULL, 16);
                 u64 titleKey1 = strtoull(s_titleKey.substr(0, 16).c_str(), NULL, 16);
                 u64 titleKey2 = strtoull(s_titleKey.substr(16, 32).c_str(), NULL, 16);
+                string size_string = "Size: Unknown";
+                uint64_t size = ULLONG_MAX;
+                uint32_t releaseDate = 99991231;
+                uint32_t dateAdded = 99991231;
 
                 if ((titleID & 0xFFF) != 0)
                     continue;
 
-                g_rightsIDs.push_back(s_rightsID);
-                g_titleIDs.push_back(titleID);
-                g_masterKeys.push_back(masterKey);
-                g_titleKeys_high.push_back(titleKey1);
-                g_titleKeys_low.push_back(titleKey2);
-                g_idoptions.push_back(titleName);
+                if (g_infoLoaded)
+                {
+                    if (g_infoJSON.count(s_rightsID))
+                    {
+                        if (!g_infoJSON[s_rightsID].count("size"))
+                            g_infoJSON[s_rightsID]["size"] = NULL;
+                        if (!g_infoJSON[s_rightsID].count("release_date_iso"))
+                            g_infoJSON[s_rightsID]["release_date_iso"] = 99991231;
+                        if (!g_infoJSON[s_rightsID].count("date_added"))
+                            g_infoJSON[s_rightsID]["date_added"] = 99991231;
+
+                        if (!g_infoJSON[s_rightsID]["size"].is_number() || g_infoJSON[s_rightsID]["size"].is_null()  
+                            || g_infoJSON[s_rightsID]["size"].get<uint64_t>() == 0)
+                        {
+                            size_string = "Size: Unknown";
+                        }
+                        else
+                        {
+                            size = (g_infoJSON[s_rightsID]["size"].get<uint64_t>());
+                            double size_num = size;
+                            ostringstream friendly_size;
+                            friendly_size << "Size: " << fixed << setprecision(2);
+                            size_num /= 1024 * 1024;
+                            if (size_num < 1024)
+                                friendly_size << size_num << " MiB";
+                            else
+                                friendly_size << size_num / 1024 << " GiB";
+                            size_string = friendly_size.str();
+                        }
+                        releaseDate = g_infoJSON[s_rightsID]["release_date_iso"].get<uint32_t>();
+                        dateAdded = g_infoJSON[s_rightsID]["date_added"].get<uint32_t>();
+                    }
+                }
+
+                g_titleList.push_back({titleName, s_rightsID, titleKey1, titleKey2, titleID, masterKey, size, releaseDate, dateAdded, size_string});
             }
             titleListTXT.close();
         }
-        if (!g_idoptions.size())
+        if (g_titleList.empty())
             return false;
+        
+        sort(g_titleList.begin(), g_titleList.end(), &sorter);
 
         g_changelog.clear();
-        if (!idoptions_old.empty())
+        if (!titleListOld.empty())
         {
             bool newGames = false;
             bool removedGames = false;
-            for (size_t i = 0; i < g_idoptions.size(); i++)
+            for (size_t i = 0; i < g_titleList.size(); i++)
             {
-                if (!isInList(g_idoptions[i], idoptions_old))
+                if (!isInList(g_titleList[i].name, titleListOld))
                 {
                     if (!newGames)
                     {
                         g_changelog += "New games:\n\n";
                         newGames = true;
                     }
-                    g_changelog += g_idoptions[i] + "\n";
+                    g_changelog += g_titleList[i].name + "\n";
                 }
             }
-            for (size_t i = 0; i < idoptions_old.size(); i++)
+            for (size_t i = 0; i < titleListOld.size(); i++)
             {
-                if (!isInList(idoptions_old[i], g_idoptions))
+                if (!isInList(titleListOld[i].name, g_titleList))
                 {
                     if (!removedGames)
                     {
                         g_changelog += "\nRemoved games:\n\n";
                         removedGames = true;
                     }
-                    g_changelog += idoptions_old[i] + "\n";
+                    g_changelog += titleListOld[i].name + "\n";
                 }
             }
         }
-
         return true;
     }
     else
