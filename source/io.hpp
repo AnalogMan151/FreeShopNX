@@ -35,4 +35,4 @@ bool loadTitles(void);
 bool loadInfo(void);
 bool getUpdateList(void);
 bool getUpdateInfo(void);
-bool sorter(Title const &lhs, Title const &rhs);
+bool sorter(Title lhs, Title rhs);

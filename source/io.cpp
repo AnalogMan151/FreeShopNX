@@ -7,8 +7,10 @@ json config;
 vector<Title> g_titleList;
 vector<Title> titleListOld;
 
-bool sorter(Title const &lhs, Title const &rhs)
+bool sorter(Title lhs, Title rhs)
 {
+    transform(lhs.name.begin(), lhs.name.end(), lhs.name.begin(), ::tolower);
+    transform(rhs.name.begin(), rhs.name.end(), rhs.name.begin(), ::tolower);
     if (g_sort == RELEASE_DATE_DEC)
     {
         if (lhs.releaseDate == rhs.releaseDate)
