@@ -67,9 +67,9 @@ bool isInList(string item, vector<Title> list)
 
 bool loadTitles(void)
 {
-    if (!ifstream("sdmc:/switch/FreeShopNX/FreeShopNX.txt"))
+    if (!ifstream(TITLES_FILE_PATH))
         return false;
-    ifstream titleListTXT("sdmc:/switch/FreeShopNX/FreeShopNX.txt");
+    ifstream titleListTXT(TITLES_FILE_PATH);
     string line;
 
     if (titleListTXT.is_open())
@@ -192,9 +192,9 @@ bool loadTitles(void)
 
 bool loadInfo(void)
 {
-    if (!ifstream("sdmc:/switch/FreeShopNX/info.json"))
+    if (!ifstream(INFOS_FILE_PATH))
         return false;
-    ifstream infoFile("sdmc:/switch/FreeShopNX/info.json");
+    ifstream infoFile(INFOS_FILE_PATH);
     if (infoFile.is_open())
     {
         if (infoFile.good())
@@ -221,14 +221,14 @@ bool loadInfo(void)
 
 bool loadConfig(void)
 {
-    if (!ifstream("sdmc:/switch/FreeShopNX/config.conf"))
+    if (!ifstream(CONFIG_FILE_PATH))
     {
-        fstream configFile("sdmc:/switch/FreeShopNX/config.conf", ios::out);
+        fstream configFile(CONFIG_FILE_PATH, ios::out);
         configFile << "title_info_url=\n";
         configFile << "title_key_url=";
         configFile.close();
     }
-    ifstream configFile("sdmc:/switch/FreeShopNX/config.conf");
+    ifstream configFile(CONFIG_FILE_PATH);
     string line;
     config.clear();
 
@@ -265,7 +265,7 @@ bool getUpdateList(void)
     curl = curl_easy_init();
     if (curl && loadConfig() && config.count("title_key_url"))
     {
-        titleList = fopen("sdmc:/switch/FreeShopNX/FreeShopNX.txt", "wb");
+        titleList = fopen(TITLES_FILE_PATH, "wb");
         curl_easy_setopt(curl, CURLOPT_URL, config["title_key_url"].get<string>().c_str());
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, titleList);
@@ -297,7 +297,7 @@ bool getUpdateInfo(void)
     curl = curl_easy_init();
     if (curl && loadConfig() && config.count("title_info_url"))
     {
-        infoJSON = fopen("sdmc:/switch/FreeShopNX/info.json", "wb");
+        infoJSON = fopen(INFOS_FILE_PATH, "wb");
         curl_easy_setopt(curl, CURLOPT_URL, config["title_info_url"].get<string>().c_str());
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, infoJSON);

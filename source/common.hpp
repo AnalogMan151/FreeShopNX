@@ -38,6 +38,8 @@ typedef union {
     };
 } color_t;
 
+#include "configuration.hpp"
+
 #include "font.hpp"
 #include "theme.hpp"
 #include "ui.hpp"
