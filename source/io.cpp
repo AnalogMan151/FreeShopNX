@@ -115,6 +115,8 @@ bool loadTitles(void)
                             g_infoJSON[s_rightsID]["release_date_iso"] = 99991231;
                         if (!g_infoJSON[s_rightsID].count("date_added"))
                             g_infoJSON[s_rightsID]["date_added"] = 99991231;
+                        // if (g_infoJSON[s_rightsID].count("title") && g_infoJSON[s_rightsID]["title"].is_string())
+                        //     titleName = g_infoJSON[s_rightsID]["title"].get<string>();
 
                         if (!g_infoJSON[s_rightsID]["size"].is_number() || g_infoJSON[s_rightsID]["size"].is_null()  
                             || g_infoJSON[s_rightsID]["size"].get<uint64_t>() == 0)
@@ -165,13 +167,15 @@ bool loadTitles(void)
                     g_changelog += g_titleList[i].name + "\n";
                 }
             }
+            if (newGames)
+                g_changelog += "\n";
             for (size_t i = 0; i < titleListOld.size(); i++)
             {
                 if (!isInList(titleListOld[i].name, g_titleList))
                 {
                     if (!removedGames)
                     {
-                        g_changelog += "\nRemoved games:\n\n";
+                        g_changelog += "Removed games:\n\n";
                         removedGames = true;
                     }
                     g_changelog += titleListOld[i].name + "\n";

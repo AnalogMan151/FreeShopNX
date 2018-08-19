@@ -29,7 +29,7 @@ string getSort(void)
 void titleScene(void)
 {
     uint32_t rightX;
-    char btnConfig_bot[] = FON_PL " Quit   " FON_MI " About   " FON_L3 " Sort   " FON_L FON_R " 10 Pages   " FON_LT FON_RT " Pages   " FON_UP FON_DN " Scroll   " FON_A " Select";
+    char btnConfig_bot[] = FON_PL " Quit   " FON_MI " About   " FON_L3 " Sort   " FON_L FON_R " 10 Pages   " FON_LT FON_RT " Pages   " FON_UP FON_DN " Scroll   " FON_A " Details";
     GetTextDimensions(fontSmall, btnConfig_bot, &rightX, NULL);
     DrawText(fontSmall, 1280 - rightX - 30, 704, themeCurrent.textColor, btnConfig_bot);
     printTitles();
