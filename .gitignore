@@ -1,4 +1,6 @@
 build/
+build.make/
+Testing/
 .vscode/
 .DS_Store
 ._*
