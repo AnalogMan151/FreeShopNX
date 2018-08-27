@@ -1,5 +1,7 @@
 #pragma once
 
+#include "color.hpp"
+
 typedef struct {
     uint8_t magic[4]; // 'fFNT'
     int version;  // 1
@@ -64,3 +66,11 @@ struct coord {
 #define FON_RS "\uE102"
 #define FON_L3 "\uE104"
 #define FON_R3 "\uE105"
+
+std::string WrapText(u32 font, const char *text, uint32_t max_width);
+struct coord DrawText(u32 font, uint32_t x, uint32_t y, color_t clr, const char* text);
+struct coord DrawTextTruncateW(u32 font, uint32_t x, uint32_t y, color_t clr, const char* text, uint32_t max_width, const char* end_text);
+int DrawTextTruncateH(u32 font, uint32_t x, uint32_t y, color_t clr, const char *text, int start_line, uint32_t max_height, const char *end_text);
+void GetTextDimensions(u32 font, const char* text, uint32_t* width_out, uint32_t* height_out);
+bool fontInitialize(void);
+void fontExit();
