@@ -1,11 +1,5 @@
 #include "common.hpp"
-
-string g_changelog;
-uint g_displayedTotal = 0;
-json g_infoJSON;
-json config;
-vector<Title> g_titleList;
-vector<Title> titleListOld;
+#include "globals.hpp"
 
 bool sorter(Title lhs, Title rhs)
 {

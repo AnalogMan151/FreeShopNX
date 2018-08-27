@@ -1,10 +1,6 @@
 #include "common.hpp"
 #include "configuration.hpp"
-
-Service g_esSrv;
-u64 g_esRefCnt;
-Service g_nsAppManSrv, g_nsGetterSrv;
-u64 g_nsRefCnt;
+#include "globals.hpp"
 
 Result esInitialize(void)
 {

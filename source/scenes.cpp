@@ -1,9 +1,5 @@
 #include "common.hpp"
-
-extern int g_installLocation;
-int g_infoLine;
-int g_infoPageLines;
-int g_totalInfoLines;
+#include "globals.hpp"
 
 string getSort(void)
 {

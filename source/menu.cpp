@@ -1,7 +1,5 @@
-#include "common.hpp"
-
-uint g_maxEntries;
-bool g_installStarted = false; 
+#include "common.hpp" 
+#include "globals.hpp"
 
 void printSubMenu(void)
 {

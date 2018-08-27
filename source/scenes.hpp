@@ -6,8 +6,6 @@
 #define ABOUT_SCENE 3
 #define INSTALL_SCENE 4
 
-extern int g_scene;
-
 void titleScene(void);
 void infoScene(void);
 void updateScene(void);

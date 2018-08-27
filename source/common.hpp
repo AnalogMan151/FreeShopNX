@@ -22,21 +22,10 @@
 #include <climits>
 using namespace std;
 
-extern bool g_titlesLoaded;
-extern bool g_infoLoaded;
-
 typedef uint8_t u8;
 typedef uint32_t u32;
 typedef uint64_t u64;
 typedef u32 Result;
-
-typedef union {
-    uint32_t abgr;
-    struct
-    {
-        uint8_t r, g, b, a;
-    };
-} color_t;
 
 #include "configuration.hpp"
 
@@ -50,7 +39,7 @@ typedef union {
 #include "json.hpp"
 using json = nlohmann::json;
 
-extern json g_infoJSON;
+#include "color.hpp"
 
 static inline uint8_t BlendColor(uint32_t src, uint32_t dst, uint8_t alpha)
 {
