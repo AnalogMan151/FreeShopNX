@@ -184,22 +184,22 @@ Result installTikCert(u64 tid, u8 mkey, u64 tkeyh, u64 tkeyl)
     tkeyh = byteswap(tkeyh);
     tkeyl = byteswap(tkeyl);
 
-    static const string cert = CERTIFICATE_DATA;
+    static const std::string cert = CERTIFICATE_DATA;
 
     size_t certBuf_size = cert.length() / 2;
     char *certBuf = new char[certBuf_size];
     for (size_t i = 0, j = 0; j < certBuf_size; i += 2, j++)
     {
-        certBuf[j] = stoi(cert.substr(i, 2), nullptr, 16);
+        certBuf[j] = std::stoi(cert.substr(i, 2), nullptr, 16);
     }
 
-    static const string ticket = TICKET_DATA;
+    static const std::string ticket = TICKET_DATA;
 
     size_t tikBuf_size = ticket.length() / 2;
     char *tikBuf = new char[tikBuf_size];
     for (size_t i = 0, j = 0; j < tikBuf_size; i += 2, j++)
     {
-        tikBuf[j] = stoi(ticket.substr(i, 2), nullptr, 16);
+        tikBuf[j] = std::stoi(ticket.substr(i, 2), nullptr, 16);
     }
 
     // patch TIK with title data

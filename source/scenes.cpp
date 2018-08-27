@@ -1,7 +1,7 @@
 #include "common.hpp"
 #include "globals.hpp"
 
-string getSort(void)
+std::string getSort(void)
 {
     if (g_sort == NAME_ASC)
         return "Name (asc)";

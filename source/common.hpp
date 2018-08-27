@@ -20,7 +20,6 @@
 #include <stdint.h>
 #include <curl/curl.h>
 #include <climits>
-using namespace std;
 
 typedef uint8_t u8;
 typedef uint32_t u32;
@@ -37,8 +36,6 @@ typedef u32 Result;
 #include "menu.hpp"
 #include "install.hpp"
 #include "json.hpp"
-using json = nlohmann::json;
-
 #include "color.hpp"
 
 static inline uint8_t BlendColor(uint32_t src, uint32_t dst, uint8_t alpha)
@@ -101,7 +98,7 @@ struct coord DrawText(u32 font, uint32_t x, uint32_t y, color_t clr, const char*
 struct coord DrawTextTruncateW(u32 font, uint32_t x, uint32_t y, color_t clr, const char* text, uint32_t max_width, const char* end_text);
 int DrawTextTruncateH(u32 font, uint32_t x, uint32_t y, color_t clr, const char *text, int start_line, uint32_t max_height, const char *end_text);
 void GetTextDimensions(u32 font, const char* text, uint32_t* width_out, uint32_t* height_out);
-string WrapText(u32 font, const char *text, uint32_t max_width);
+std::string WrapText(u32 font, const char *text, uint32_t max_width);
 
 bool fontInitialize(void);
 void fontExit();

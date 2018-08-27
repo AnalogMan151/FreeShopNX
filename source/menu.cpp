@@ -59,14 +59,14 @@ void printTitles(void)
     }
 }
 
-void printInfo(string rightsID)
+void printInfo(const std::string& rightsID)
 {
     printSubMenu();
-    string title;
-    string release;
-    string players;
-    string intro;
-    string desc;
+    std::string title;
+    std::string release;
+    std::string players;
+    std::string intro;
+    std::string desc;
     
     if (g_infoLoaded)
     {
@@ -87,7 +87,7 @@ void printInfo(string rightsID)
             if (!g_infoJSON[rightsID].count("languages"))
                 g_infoJSON[rightsID]["languages"] = {};
 
-            string category;
+            std::string category;
             if (g_infoJSON[rightsID]["category"].is_array()) 
             {
                 if (g_infoJSON[rightsID]["category"].empty())
@@ -95,7 +95,7 @@ void printInfo(string rightsID)
 
                 for (u64 i = 0; i < g_infoJSON[rightsID]["category"].size(); i++)
                 {
-                    category += g_infoJSON[rightsID]["category"][i].get<string>();
+                    category += g_infoJSON[rightsID]["category"][i].get<std::string>();
                     if (i + 1 != g_infoJSON[rightsID]["category"].size())
                         category += ",";
                 }
@@ -105,7 +105,7 @@ void printInfo(string rightsID)
                 category = "Error";
             }
 
-            string languages;
+            std::string languages;
             if (g_infoJSON[rightsID]["languages"].is_array())
             {
                 if (g_infoJSON[rightsID]["languages"].empty())
@@ -113,7 +113,7 @@ void printInfo(string rightsID)
 
                 for (u64 i = 0; i < g_infoJSON[rightsID]["languages"].size(); i++)
                 {
-                    languages += g_infoJSON[rightsID]["languages"][i].get<string>();
+                    languages += g_infoJSON[rightsID]["languages"][i].get<std::string>();
                     if (i+1 != g_infoJSON[rightsID]["languages"].size())
                         languages += ", ";
                 }
@@ -124,36 +124,36 @@ void printInfo(string rightsID)
             }
 
             if (g_infoJSON[rightsID]["title"].is_string())
-                title = g_infoJSON[rightsID]["title"].get<string>();
+                title = g_infoJSON[rightsID]["title"].get<std::string>();
             else
                 title = "Error";
             if (g_infoJSON[rightsID]["release_date_string"].is_string())
-                release = g_infoJSON[rightsID]["release_date_string"].get<string>();
+                release = g_infoJSON[rightsID]["release_date_string"].get<std::string>();
             else
                 release = "Error";
             if (g_infoJSON[rightsID]["number_of_players"].is_string())
-                players = g_infoJSON[rightsID]["number_of_players"].get<string>();
+                players = g_infoJSON[rightsID]["number_of_players"].get<std::string>();
             else
                 players = "Error";
             if (g_infoJSON[rightsID]["intro"].is_string())
-                intro = g_infoJSON[rightsID]["intro"].get<string>();
+                intro = g_infoJSON[rightsID]["intro"].get<std::string>();
             else
                 intro = "";
             if (intro != "")
                 intro += "\n\n";
             if (g_infoJSON[rightsID]["description"].is_string())
-                desc = intro + g_infoJSON[rightsID]["description"].get<string>();
+                desc = intro + g_infoJSON[rightsID]["description"].get<std::string>();
             else
                 desc = "Error";
             desc += "\n\n\nLanguages: " + languages;
             desc = WrapText(fontSmall, desc.c_str(), 750);
-            string meta = "Release: " + release + " | Categories: " + category + " | Players: " + players;
+            std::string meta = "Release: " + release + " | Categories: " + category + " | Players: " + players;
 
-            stringstream infoString(desc);
-            string infoLines;
-            vector<string> infoLineList;
+            std::stringstream infoString(desc);
+            std::string infoLines;
+            std::vector<std::string> infoLineList;
 
-            while (getline(infoString, infoLines, '\n'))
+            while (std::getline(infoString, infoLines, '\n'))
             {
                 infoLineList.push_back(infoLines);
             }
@@ -237,11 +237,11 @@ void printChangelog(void)
 {
     printSubMenu();
     DrawText(fontLarge, 245, 46, themeCurrent.textColor, "Changelog");
-    stringstream infoString(g_changelog);
-    string infoLines;
-    vector<string> infoLineList;
+    std::stringstream infoString(g_changelog);
+    std::string infoLines;
+    std::vector<std::string> infoLineList;
 
-    while (getline(infoString, infoLines, '\n'))
+    while (std::getline(infoString, infoLines, '\n'))
     {
         infoLineList.push_back(infoLines);
     }

@@ -49,7 +49,7 @@ bool sorter(Title lhs, Title rhs)
     
 }
 
-bool isInList(string item, vector<Title> list)
+bool isInList(const std::string& item, const std::vector<Title>& list)
 {
     for (size_t i = 0; i < list.size(); i++)
     {
@@ -61,10 +61,10 @@ bool isInList(string item, vector<Title> list)
 
 bool loadTitles(void)
 {
-    if (!ifstream(TITLES_FILE_PATH))
+    if (!std::ifstream(TITLES_FILE_PATH))
         return false;
-    ifstream titleListTXT(TITLES_FILE_PATH);
-    string line;
+    std::ifstream titleListTXT(TITLES_FILE_PATH);
+    std::string line;
 
     if (titleListTXT.is_open())
     {
@@ -78,20 +78,20 @@ bool loadTitles(void)
                 if (line.empty())
                     continue;
 
-                stringstream ss(line);
-                string s_rightsID, s_titleKey, titleName;
-                getline(ss, s_rightsID, '|');
-                getline(ss, s_titleKey, '|');
-                getline(ss, titleName, '|');
+                std::stringstream ss(line);
+                std::string s_rightsID, s_titleKey, titleName;
+                std::getline(ss, s_rightsID, '|');
+                std::getline(ss, s_titleKey, '|');
+                std::getline(ss, titleName, '|');
 
                 if (s_rightsID.length() != 32 || s_titleKey.length() != 32 || titleName == "")
                     continue;
 
                 u64 titleID = strtoull(s_rightsID.substr(0, 16).c_str(), NULL, 16);
-                u8 masterKey = stoul(s_rightsID.substr(16, 32).c_str(), NULL, 16);
+                u8 masterKey = std::stoul(s_rightsID.substr(16, 32).c_str(), NULL, 16);
                 u64 titleKey1 = strtoull(s_titleKey.substr(0, 16).c_str(), NULL, 16);
                 u64 titleKey2 = strtoull(s_titleKey.substr(16, 32).c_str(), NULL, 16);
-                string size_string = "Size: Unknown";
+                std::string size_string = "Size: Unknown";
                 uint64_t size = ULLONG_MAX;
                 uint32_t releaseDate = 99991231;
                 uint32_t dateAdded = 99991231;
@@ -121,8 +121,8 @@ bool loadTitles(void)
                         {
                             size = (g_infoJSON[s_rightsID]["size"].get<uint64_t>());
                             double size_num = size;
-                            ostringstream friendly_size;
-                            friendly_size << "Size: " << fixed << setprecision(2);
+                            std::ostringstream friendly_size;
+                            friendly_size << "Size: " << std::fixed << std::setprecision(2);
                             size_num /= 1024 * 1024;
                             if (size_num < 1024)
                                 friendly_size << size_num << " MiB";
@@ -186,20 +186,20 @@ bool loadTitles(void)
 
 bool loadInfo(void)
 {
-    if (!ifstream(INFOS_FILE_PATH))
+    if (!std::ifstream(INFOS_FILE_PATH))
         return false;
-    ifstream infoFile(INFOS_FILE_PATH);
+    std::ifstream infoFile(INFOS_FILE_PATH);
     if (infoFile.is_open())
     {
         if (infoFile.good())
         {
-            string str((istreambuf_iterator<char>(infoFile)), istreambuf_iterator<char>());
+            std::string str((std::istreambuf_iterator<char>(infoFile)), std::istreambuf_iterator<char>());
             infoFile.close();
             try
             {
-                g_infoJSON = json::parse(str);
+                g_infoJSON = nlohmann::json::parse(str);
             }
-            catch (exception& e)
+            catch (std::exception& e)
             {
                 return false;
             }
@@ -215,15 +215,15 @@ bool loadInfo(void)
 
 bool loadConfig(void)
 {
-    if (!ifstream(CONFIG_FILE_PATH))
+    if (!std::ifstream(CONFIG_FILE_PATH))
     {
-        fstream configFile(CONFIG_FILE_PATH, ios::out);
+        std::fstream configFile(CONFIG_FILE_PATH, std::ios::out);
         configFile << "title_info_url=\n";
         configFile << "title_key_url=";
         configFile.close();
     }
-    ifstream configFile(CONFIG_FILE_PATH);
-    string line;
+    std::ifstream configFile(CONFIG_FILE_PATH);
+    std::string line;
     config.clear();
 
     if (configFile.is_open())
@@ -232,10 +232,10 @@ bool loadConfig(void)
         {
             while (getline(configFile, line))
             {
-                stringstream ss(line);
-                string configId, configVal;
-                getline(ss, configId, '=');
-                getline(ss, configVal, '=');
+                std::stringstream ss(line);
+                std::string configId, configVal;
+                std::getline(ss, configId, '=');
+                std::getline(ss, configVal, '=');
                 config[configId] = configVal;
             }
             configFile.close();
@@ -260,7 +260,7 @@ bool getUpdateList(void)
     if (curl && loadConfig() && config.count("title_key_url"))
     {
         titleList = fopen(TITLES_FILE_PATH, "wb");
-        curl_easy_setopt(curl, CURLOPT_URL, config["title_key_url"].get<string>().c_str());
+        curl_easy_setopt(curl, CURLOPT_URL, config["title_key_url"].get<std::string>().c_str());
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, titleList);
 
@@ -292,7 +292,7 @@ bool getUpdateInfo(void)
     if (curl && loadConfig() && config.count("title_info_url"))
     {
         infoJSON = fopen(INFOS_FILE_PATH, "wb");
-        curl_easy_setopt(curl, CURLOPT_URL, config["title_info_url"].get<string>().c_str());
+        curl_easy_setopt(curl, CURLOPT_URL, config["title_info_url"].get<std::string>().c_str());
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, infoJSON);
 
