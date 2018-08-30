@@ -1,6 +1,5 @@
 #include "common.hpp"
-
-theme_t themeCurrent;
+#include "globals.hpp"
 
 void themeStartup(ThemePreset preset) {
     switch (preset) {

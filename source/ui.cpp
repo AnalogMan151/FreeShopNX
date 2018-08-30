@@ -1,6 +1,5 @@
 #include "common.hpp"
-
-int g_installLocation = 0;
+#include "globals.hpp"
 
 void drawSeperators(void)
 {
