@@ -230,11 +230,11 @@ static uint8_t getUTF8size(uint32_t codepoint)
     return 0;
 }
 
-string WrapText(u32 font, const char *text, uint32_t max_width)
+std::string WrapText(u32 font, const char *text, uint32_t max_width)
 {
-    string word = "";
-    string line = "";
-    string result = "";
+    std::string word = "";
+    std::string line = "";
+    std::string result = "";
     uint32_t width = 0;
     bool disableWordWrap = false;
 

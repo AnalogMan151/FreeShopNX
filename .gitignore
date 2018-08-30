@@ -1,4 +1,7 @@
 build/
+build.make/
+Testing/
+.vscode/
 .DS_Store
 ._*
 *.elf

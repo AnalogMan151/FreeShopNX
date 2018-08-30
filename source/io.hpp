@@ -1,9 +1,12 @@
 #pragma once
 
+#include <string>
+#include <cstdint>
+
 struct Title
 {
-    string name;
-    string rightsID;
+    std::string name;
+    std::string rightsID;
     uint64_t titleKeyUpper;
     uint64_t titleKeyLower;
     uint64_t titleID;
@@ -11,8 +14,7 @@ struct Title
     uint64_t size;
     uint32_t releaseDate;
     uint32_t addedDate;
-    string size_string;
-
+    std::string size_string;
 };
 
 enum SortOrder
@@ -26,10 +28,6 @@ enum SortOrder
     RELEASE_DATE_ASC,
     RELEASE_DATE_DEC
 };
-
-extern vector<Title> g_titleList;
-extern string g_changelog;
-extern SortOrder g_sort;
 
 bool loadTitles(void);
 bool loadInfo(void);

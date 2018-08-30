@@ -1,11 +1,7 @@
 #include "common.hpp"
+#include "globals.hpp"
 
-extern int g_installLocation;
-int g_infoLine;
-int g_infoPageLines;
-int g_totalInfoLines;
-
-string getSort(void)
+std::string getSort(void)
 {
     if (g_sort == NAME_ASC)
         return "Name (asc)";

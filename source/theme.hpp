@@ -1,5 +1,7 @@
 #pragma once
 
+#include "color.hpp"
+
 typedef struct
 {
     color_t textColor;
@@ -17,5 +19,3 @@ typedef enum
 } ThemePreset;
 
 void themeStartup(ThemePreset preset);
-
-extern theme_t themeCurrent;

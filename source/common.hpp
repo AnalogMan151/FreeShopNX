@@ -20,23 +20,13 @@
 #include <stdint.h>
 #include <curl/curl.h>
 #include <climits>
-using namespace std;
-
-extern bool g_titlesLoaded;
-extern bool g_infoLoaded;
 
 typedef uint8_t u8;
 typedef uint32_t u32;
 typedef uint64_t u64;
 typedef u32 Result;
 
-typedef union {
-    uint32_t abgr;
-    struct
-    {
-        uint8_t r, g, b, a;
-    };
-} color_t;
+#include "configuration.hpp"
 
 #include "font.hpp"
 #include "theme.hpp"
@@ -46,9 +36,7 @@ typedef union {
 #include "menu.hpp"
 #include "install.hpp"
 #include "json.hpp"
-using json = nlohmann::json;
-
-extern json g_infoJSON;
+#include "color.hpp"
 
 static inline uint8_t BlendColor(uint32_t src, uint32_t dst, uint8_t alpha)
 {
@@ -104,13 +92,3 @@ static inline color_t FetchPixelColor(uint32_t x, uint32_t y)
     u8 b = (u8)(val>>16);
     return MakeColor(r, g, b, 255);
 }
-
-void DrawPixel(uint32_t x, uint32_t y, color_t clr);
-struct coord DrawText(u32 font, uint32_t x, uint32_t y, color_t clr, const char* text);
-struct coord DrawTextTruncateW(u32 font, uint32_t x, uint32_t y, color_t clr, const char* text, uint32_t max_width, const char* end_text);
-int DrawTextTruncateH(u32 font, uint32_t x, uint32_t y, color_t clr, const char *text, int start_line, uint32_t max_height, const char *end_text);
-void GetTextDimensions(u32 font, const char* text, uint32_t* width_out, uint32_t* height_out);
-string WrapText(u32 font, const char *text, uint32_t max_width);
-
-bool fontInitialize(void);
-void fontExit();

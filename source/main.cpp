@@ -1,13 +1,5 @@
 #include "common.hpp"
-
-uint8_t *g_framebuf;
-u32 g_framebuf_width;
-int g_scene;
-uint g_idselected = 0;
-SortOrder g_sort = NAME_ASC;
-bool g_titlesLoaded = false;
-bool g_infoLoaded = false;
-FsStorageId g_storageID = FsStorageId_SdCard;
+#include "globals.hpp"
 
 int main(int argc, char **argv)
 {
