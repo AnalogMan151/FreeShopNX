@@ -32,7 +32,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 APP_TITLE   := FreeShopNX - CDN title installer
 APP_AUTHOR  := AnalogMan
-APP_VERSION := 0.3.0
+APP_VERSION := 0.4.0
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build.make
 SOURCES		:=	source
