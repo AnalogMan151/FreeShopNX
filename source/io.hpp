@@ -17,9 +17,10 @@ struct Title
     std::string size_string;
 };
 
-enum SortOrder
+enum class SortOrder
+    : uint32_t
 {
-    NAME_ASC=0,
+    NAME_ASC = 0,
     NAME_DEC,
     SIZE_ASC,
     SIZE_DEC,
