@@ -3,8 +3,8 @@
 
 int main(int argc, char **argv)
 {
+    g_scene = &title_scene;
     Result rc = 0;
-    g_scene = TITLE_SCENE;
     g_infoLoaded = loadInfo();
     g_titlesLoaded = loadTitles();
 
@@ -47,20 +47,7 @@ int main(int argc, char **argv)
         memset(g_framebuf, 237, gfxGetFramebufferSize());
 
         drawUI();
-
-        if (g_scene == TITLE_SCENE)
-        {
-            titleScene();
-            drawSeperators();
-        }
-        if (g_scene == INFO_SCENE)
-            infoScene();
-        if (g_scene == UPDATE_SCENE)
-            updateScene();
-        if (g_scene == ABOUT_SCENE)
-            aboutScene();
-        if (g_scene == INSTALL_SCENE)
-            installScene();
+        g_scene->draw();
 
         gfxFlushBuffers();
 
@@ -69,29 +56,10 @@ int main(int argc, char **argv)
 
         hidScanInput();
 
-        u32 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-        u32 kHeld = hidKeysHeld(CONTROLLER_P1_AUTO);
-
-        if (kDown & KEY_PLUS)
-            break;
-        if (kDown & KEY_A)
-            buttonA();
-        if (kDown & KEY_B)
-            buttonB();
-        if (kDown & KEY_X)
-            buttonX();
-        if (kDown & KEY_Y)
-            buttonY();
-        if (kDown & KEY_MINUS)
-            buttonMinus();
-        if (kHeld & KEY_UP || kHeld & KEY_DOWN)
-            buttonUpDown();
-        if (kDown & KEY_LEFT || kDown & KEY_RIGHT)
-            buttonLeftRight();
-        if (kDown & KEY_L || kDown & KEY_R)
-            buttonLR();
-        if (kDown & KEY_LSTICK)
-            buttonLStick();
+        u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
+        u64 kHeld = hidKeysHeld(CONTROLLER_P1_AUTO);
+        if (kDown & KEY_PLUS) break; // Handle the exit key whatever the scene
+        g_scene->handle_input(kDown, kHeld);
     }
 
     socketExit();

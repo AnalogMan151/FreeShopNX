@@ -1,28 +1,9 @@
-#include "common.hpp"
+#include <string>
+#include "scenes.hpp"
 #include "globals.hpp"
+#include "common.hpp"
 
-std::string getSort(void)
-{
-    if (g_sort == NAME_ASC)
-        return "Name (asc)";
-    if (g_sort == NAME_DEC)
-        return "Name (dec)";
-    if (g_sort == SIZE_ASC)
-        return "Size (asc)";
-    if (g_sort == SIZE_DEC)
-        return "Size (dec)";
-    if (g_sort == RELEASE_DATE_ASC)
-        return "Release Date (asc)";
-    if (g_sort == RELEASE_DATE_DEC)
-        return "Release Date (dec)";
-    if (g_sort == ADDED_DATE_ASC)
-        return "Added Date (asc)";
-    if (g_sort == ADDED_DATE_DEC)
-        return "Added Date (dec)";
-    return "Name (asc)";
-}
-
-void titleScene(void)
+void title_scene_t::draw()
 {
     uint32_t rightX;
     char btnConfig_bot[] = FON_PL " Quit   " FON_MI " About   " FON_L3 " Sort   " FON_L FON_R " 10 Pages   " FON_LT FON_RT " Pages   " FON_UP FON_DN " Scroll   " FON_A " Details";
@@ -46,13 +27,62 @@ void titleScene(void)
     sprintf(btnConfig_top2, FON_Y " Update List");
     GetTextDimensions(fontSmall, FON_X " NAND   " FON_Y " Update List", &rightX1, NULL);
     GetTextDimensions(fontSmall, btnConfig_top2, &rightX2, NULL);
-    GetTextDimensions(fontSmall, getSort().c_str(), &rightX3, NULL);
+    GetTextDimensions(fontSmall, getSort(g_sort), &rightX3, NULL);
     DrawText(fontSmall, 1280 - rightX1 - 30, 32, themeCurrent.textColor, btnConfig_top1);
     DrawText(fontSmall, 1280 - rightX2 - 30, 32, themeCurrent.textColor, btnConfig_top2);
-    DrawText(fontSmall, ((1280 - rightX3) /2), 32, themeCurrent.textColor, getSort().c_str());
+    DrawText(fontSmall, ((1280 - rightX3) /2), 32, themeCurrent.textColor, getSort(g_sort));
+
+    drawSeperators();
 }
 
-void infoScene(void)
+void title_scene_t::handle_input(u64 kDown, u64 kHeld)
+{
+    if (kDown & KEY_A && g_titlesLoaded)
+    {
+        g_infoLine = 0;
+        g_infoPageLines = 0;
+        g_scene = &info_scene;
+    }
+    else if (kDown & KEY_X) { g_storageID = (g_storageID == FsStorageId_SdCard) ? FsStorageId_NandUser : FsStorageId_SdCard; }
+    else if (kDown & KEY_Y) { g_scene = &update_scene; }
+    else if (kDown & KEY_MINUS) { g_scene = &about_scene; }
+    else if (kDown & KEY_LSTICK)
+    {
+        g_sort = (g_sort == SortOrder::RELEASE_DATE_DEC) ? SortOrder::NAME_ASC : (static_cast<SortOrder>(static_cast<uint32_t>(g_sort) + 1));
+        sort(g_titleList.begin(), g_titleList.end(), &sorter);
+    }
+    else if (g_titlesLoaded)
+    {
+        if (kHeld & KEY_UP)
+        {
+            g_idselected = (g_idselected > 0) ? (g_idselected - 1) : g_titleList.size() - 1;
+            SleepNano(200000000); // TODO: Bad way to slow down the scrolling speed, change that
+        }
+        else if (kHeld & KEY_DOWN)
+        {
+            g_idselected = (g_idselected < g_titleList.size() - 1) ? (g_idselected + 1) : 0;
+            SleepNano(200000000); // TODO: Bad way to slow down the scrolling speed, change that
+        }
+        else if (kDown & KEY_LEFT)
+        {
+            g_idselected = (g_idselected > g_maxEntries) ? (g_idselected - g_maxEntries) : 0;
+        }
+        else if (kDown & KEY_RIGHT)
+        {
+            g_idselected = (g_idselected < g_titleList.size() - g_maxEntries) ? (g_idselected + g_maxEntries) : (g_titleList.size() - 1);
+        }
+        else if (kDown & KEY_L)
+        {
+            g_idselected = (g_idselected > g_maxEntries * 10) ? (g_idselected - g_maxEntries * 10) : 0;
+        }
+        else if (kDown & KEY_R)
+        {
+            g_idselected = (g_idselected < g_titleList.size() - g_maxEntries * 10) ? (g_idselected + g_maxEntries * 10) : (g_titleList.size() - 1);
+        }
+    }
+}
+
+void info_scene_t::draw()
 {
     printTitles();
     uint32_t rightX;
@@ -62,7 +92,15 @@ void infoScene(void)
     DrawText(fontSmall, 1280 - rightX - 230, 704, themeCurrent.textColor, btnConfig_bot);
 }
 
-void updateScene(void)
+void info_scene_t::handle_input(u64 kDown, u64 kHeld)
+{
+    if (kDown & KEY_A) { g_scene = &install_scene; }
+    else if (kDown & KEY_B) { g_scene = &title_scene; }
+    else if (kHeld & KEY_UP && g_infoLine > 0) { g_infoLine -= 1; }
+    else if (kHeld & KEY_DOWN && (g_infoLine + g_infoPageLines < g_totalInfoLines + 1)) { g_infoLine += 1; }
+}
+
+void update_scene_t::draw()
 {
     uint32_t rightX;
     if (!g_changelog.empty())
@@ -110,15 +148,28 @@ void updateScene(void)
         gfxFlushBuffers();
         gfxSwapBuffers();
         gfxWaitForVsync();
-        svcSleepThread((u64)1000000000*5);
+        SleepNano((u64)1000000000*5); // TODO: What is the use for that ? We should never sleep a thread
     }
     g_idselected = 0;
-    if (g_changelog.empty())
-        g_scene = TITLE_SCENE;
+    if (g_changelog.empty()) g_scene = &title_scene;
 
 }
 
-void aboutScene(void)
+void update_scene_t::handle_input(u64 kDown, u64 kHeld)
+{
+    if (kDown & KEY_B && !g_changelog.empty())
+    {
+        g_changelog.clear();
+        g_scene = &title_scene;
+    }
+    else if (!g_changelog.empty())
+    {
+        if (kHeld & KEY_UP && g_infoLine > 0) { g_infoLine -= 1; }
+        else if (kHeld & KEY_DOWN && (g_infoLine + g_infoPageLines < g_totalInfoLines + 1)) { g_infoLine += 1; }
+    }
+}
+
+void about_scene_t::draw()
 {
     printTitles();
     printAbout();
@@ -128,7 +179,12 @@ void aboutScene(void)
     DrawText(fontSmall, 1280 - rightX - 230, 704, themeCurrent.textColor, btnConfig_bot);
 }
 
-void installScene(void)
+void about_scene_t::handle_input(u64 kDown, u64 kHeld)
+{
+    if (kDown & KEY_B) { g_scene = &title_scene; }
+}
+
+void install_scene_t::draw()
 {
     printTitles();
     printInstall();
@@ -138,155 +194,11 @@ void installScene(void)
     DrawText(fontSmall, 1280 - rightX - 230, 704, themeCurrent.textColor, btnConfig_bot);
 }
 
-void buttonA(void)
+void install_scene_t::handle_input(u64 kDown, u64 kHeld)
 {
-    if (g_scene == INFO_SCENE)
-    {
-        g_scene = INSTALL_SCENE;
-    }
-
-    if (g_scene == TITLE_SCENE && g_titlesLoaded)
-    {
-        g_infoLine = 0;
-        g_infoPageLines = 0;
-        g_scene = INFO_SCENE;
-    }
-}
-
-void buttonB(void)
-{
-    if (g_scene == INFO_SCENE)
-        g_scene = TITLE_SCENE;
-    if (g_scene == ABOUT_SCENE)
-        g_scene = TITLE_SCENE;
-    if (g_scene == INSTALL_SCENE)
+    if (kDown & KEY_B)
     {
         g_installStarted = false;
-        g_scene = TITLE_SCENE;
-    }
-    if (g_scene == UPDATE_SCENE && !g_changelog.empty())
-    {
-        g_changelog.clear();
-        g_scene = TITLE_SCENE;
-    }
-}
-
-void buttonX(void)
-{
-    if (g_scene == TITLE_SCENE)
-    {
-        if (g_storageID == FsStorageId_SdCard)
-            g_storageID = FsStorageId_NandUser;
-        else
-            g_storageID = FsStorageId_SdCard;
-    }
-}
-
-void buttonY(void)
-{
-    if (g_scene == TITLE_SCENE)
-        g_scene = UPDATE_SCENE;
-}
-
-void buttonMinus(void)
-{
-    if (g_scene == TITLE_SCENE)
-        g_scene = ABOUT_SCENE;
-}
-
-void buttonUpDown(void)
-{
-    u32 kHeld = hidKeysHeld(CONTROLLER_P1_AUTO);
-    if (g_scene == TITLE_SCENE && g_titlesLoaded)
-    {
-        if (kHeld & KEY_UP)
-        {
-            if (g_idselected > 0)
-                g_idselected -= 1;
-            else
-                g_idselected = g_titleList.size() - 1;
-            svcSleepThread(200000000);
-        }
-        if (kHeld & KEY_DOWN)
-        {
-            if (g_idselected < g_titleList.size() - 1)
-                g_idselected += 1;
-            else
-                g_idselected = 0;
-            svcSleepThread(200000000);
-        }
-    }
-    if (g_scene == INFO_SCENE || (g_scene == UPDATE_SCENE && !g_changelog.empty()))
-    {
-        if (kHeld & KEY_UP)
-        {
-            if (g_infoLine > 0)
-                g_infoLine -= 1;
-        }
-        if (kHeld & KEY_DOWN)
-        {
-            if (g_infoLine + g_infoPageLines < g_totalInfoLines + 1)
-                g_infoLine += 1;
-        }
-    }
-}
-
-void buttonLeftRight(void)
-{
-    u32 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-    if (g_scene == TITLE_SCENE && g_titlesLoaded)
-    {
-        if (kDown & KEY_LEFT)
-        {
-            if (g_idselected > g_maxEntries)
-                g_idselected -= g_maxEntries;
-            else
-                g_idselected = 0;
-        }
-        if (kDown & KEY_RIGHT)
-        {
-            if (g_idselected < g_titleList.size() - g_maxEntries)
-                g_idselected += g_maxEntries;
-            else
-                g_idselected = g_titleList.size() - 1;
-        }
-    }
-}
-
-void buttonLR(void)
-{
-    u32 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-    if (g_scene == TITLE_SCENE && g_titlesLoaded)
-    {
-        if (kDown & KEY_L)
-        {
-            if (g_idselected > g_maxEntries * 10)
-                g_idselected -= g_maxEntries * 10;
-            else
-                g_idselected = 0;
-        }
-        if (kDown & KEY_R)
-        {
-            if (g_idselected < g_titleList.size() - g_maxEntries * 10)
-                g_idselected += g_maxEntries * 10;
-            else
-                g_idselected = g_titleList.size() - 1;
-        }
-    }
-}
-
-void buttonLStick(void)
-{
-    u32 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-    if (g_scene == TITLE_SCENE)
-    {
-        if (kDown & KEY_LSTICK)
-        {
-            if (g_sort == RELEASE_DATE_DEC)
-                g_sort = NAME_ASC;
-            else
-                g_sort = (SortOrder)((uint)g_sort + 1);
-            sort(g_titleList.begin(), g_titleList.end(), &sorter);
-        }
+        g_scene = &title_scene;
     }
 }

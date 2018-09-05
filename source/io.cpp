@@ -5,43 +5,43 @@ bool sorter(Title lhs, Title rhs)
 {
     transform(lhs.name.begin(), lhs.name.end(), lhs.name.begin(), ::tolower);
     transform(rhs.name.begin(), rhs.name.end(), rhs.name.begin(), ::tolower);
-    if (g_sort == RELEASE_DATE_DEC)
+    if (g_sort == SortOrder::RELEASE_DATE_DEC)
     {
         if (lhs.releaseDate == rhs.releaseDate)
             return lhs.name < rhs.name;
         return lhs.releaseDate > rhs.releaseDate;
     }
-    if (g_sort == ADDED_DATE_DEC)
+    if (g_sort == SortOrder::ADDED_DATE_DEC)
     {
         if (lhs.addedDate == rhs.addedDate)
             return lhs.name < rhs.name;
         return lhs.addedDate > rhs.addedDate;
     }
-    if (g_sort == RELEASE_DATE_ASC)
+    if (g_sort == SortOrder::RELEASE_DATE_ASC)
     {
         if (lhs.releaseDate == rhs.releaseDate)
             return lhs.name < rhs.name;
         return lhs.releaseDate < rhs.releaseDate;
     }
-    if (g_sort == ADDED_DATE_ASC)
+    if (g_sort == SortOrder::ADDED_DATE_ASC)
     {
         if (lhs.addedDate == rhs.addedDate)
             return lhs.name < rhs.name;
         return lhs.addedDate < rhs.addedDate;
     }
-    if (g_sort == SIZE_DEC)
+    if (g_sort == SortOrder::SIZE_DEC)
     {
         if (lhs.size == rhs.size)
             return lhs.name < rhs.name;
         return lhs.size > rhs.size;
     }
-    if (g_sort == SIZE_ASC)
+    if (g_sort == SortOrder::SIZE_ASC)
     {
         if (lhs.size == rhs.size)
             return lhs.name < rhs.name;
         return lhs.size < rhs.size;
     }
-    if (g_sort == NAME_DEC)
+    if (g_sort == SortOrder::NAME_DEC)
     {
         return lhs.name > rhs.name;
     }
