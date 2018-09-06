@@ -17,9 +17,10 @@ struct Title
     std::string size_string;
 };
 
-enum SortOrder
+enum class SortOrder
+    : uint32_t
 {
-    NAME_ASC=0,
+    NAME_ASC = 0,
     NAME_DEC,
     SIZE_ASC,
     SIZE_DEC,
@@ -28,6 +29,22 @@ enum SortOrder
     RELEASE_DATE_ASC,
     RELEASE_DATE_DEC
 };
+
+inline const char* getSort(SortOrder so)
+{
+    switch(so)
+    {
+        case SortOrder::NAME_ASC: return "Name (asc)";
+        case SortOrder::NAME_DEC: return "Name (dec)";
+        case SortOrder::SIZE_ASC: return "Size (asc)";
+        case SortOrder::SIZE_DEC: return "Size (dec)";
+        case SortOrder::RELEASE_DATE_ASC: return "Release Date (asc)";
+        case SortOrder::RELEASE_DATE_DEC: return "Release Date (dec)";
+        case SortOrder::ADDED_DATE_ASC: return "Added Date (asc)";
+        case SortOrder::ADDED_DATE_DEC: return "Added Date (dec)";
+    }
+    return "Name (asc)";
+}
 
 bool loadTitles(void);
 bool loadInfo(void);

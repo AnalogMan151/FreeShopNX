@@ -1,4 +1,9 @@
-#include "common.hpp"
+#include "font.hpp"
+
+extern "C" {
+    #include <switch/services/pl.h>
+    #include <switch/services/set.h>
+}
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -28,7 +33,7 @@ static bool FontSetType(u32 font)
                 300,                    /* horizontal device resolution    */
                 300);                   /* vertical device resolution      */
 
-         if (ret) return false;
+        if (ret) return false;
     }
 
     return true;
@@ -80,7 +85,7 @@ static inline bool FontLoadGlyph(glyph_t* glyph, u32 font, uint32_t codepoint)
     return true;
 }
 
-static void DrawGlyph(uint32_t x, uint32_t y, color_t clr, const glyph_t* glyph)
+static void DrawGlyph(frame_t& frame, uint32_t x, uint32_t y, color_t clr, const glyph_t* glyph)
 {
     uint32_t i, j;
     const uint8_t* data = glyph->data;
@@ -92,7 +97,7 @@ static void DrawGlyph(uint32_t x, uint32_t y, color_t clr, const glyph_t* glyph)
         {
             clr.a = data[i];
             if (!clr.a) continue;
-            DrawPixel(x+i, y+j, clr);
+            DrawPixel(frame, x+i, y+j, clr);
         }
         data+= glyph->pitch;
     }
@@ -165,7 +170,7 @@ static inline uint32_t DecodeUTF8(const char** ptr)
     return 0xFFFD;
 }
 
-static uint DrawText_(u32 font, uint32_t x, uint32_t y, color_t clr, const char *text, uint32_t max_width, int start_line, uint32_t max_height, const char *end_text)
+static uint DrawText_(frame_t& frame, u32 font, uint32_t x, uint32_t y, color_t clr, const char *text, uint32_t max_width, int start_line, uint32_t max_height, const char *end_text)
 {
     uint32_t origX = x;
     uint32_t origY = y;
@@ -210,7 +215,7 @@ static uint DrawText_(u32 font, uint32_t x, uint32_t y, color_t clr, const char 
         }
 
         if (current_line >= start_line) {
-            DrawGlyph(x, y, clr, &glyph);
+            DrawGlyph(frame, x, y, clr, &glyph);
             x += glyph.advance;
         }
     }
@@ -312,27 +317,27 @@ std::string WrapText(u32 font, const char *text, uint32_t max_width)
     return result;
 }
 
-struct coord DrawText(u32 font, uint32_t x, uint32_t y, color_t clr, const char *text)
+struct coord DrawText(frame_t& frame, u32 font, uint32_t x, uint32_t y, color_t clr, const char *text)
 {
-    DrawText_(font, x, y, clr, text, 0, 0, 0, NULL);
+    DrawText_(frame, font, x, y, clr, text, 0, 0, 0, NULL);
     uint32_t w, h;
     GetTextDimensions(font, text, &w, &h);
     struct coord pos = {x+w, y+h-(g_scale*2)};
     return pos;
 }
 
-struct coord DrawTextTruncateW(u32 font, uint32_t x, uint32_t y, color_t clr, const char *text, uint32_t max_width, const char *end_text)
+struct coord DrawTextTruncateW(frame_t& frame, u32 font, uint32_t x, uint32_t y, color_t clr, const char *text, uint32_t max_width, const char *end_text)
 {
-    DrawText_(font, x, y, clr, text, max_width, 0, 0, end_text);
+    DrawText_(frame, font, x, y, clr, text, max_width, 0, 0, end_text);
     uint32_t w, h;
     GetTextDimensions(font, text, &w, &h);
     struct coord pos = {x + w, y + h - (g_scale * 2)};
     return pos;
 }
 
-int DrawTextTruncateH(u32 font, uint32_t x, uint32_t y, color_t clr, const char *text, int start_line, uint32_t max_height, const char *end_text)
+int DrawTextTruncateH(frame_t& frame, u32 font, uint32_t x, uint32_t y, color_t clr, const char *text, int start_line, uint32_t max_height, const char *end_text)
 {
-    int infoPageLines = DrawText_(font, x, y, clr, text, 0, start_line, max_height, end_text);
+    int infoPageLines = DrawText_(frame, font, x, y, clr, text, 0, start_line, max_height, end_text);
     return infoPageLines;
 }
 
