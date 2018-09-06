@@ -1,34 +1,36 @@
-#include "common.hpp" 
+#include "menu.hpp"
 #include "globals.hpp"
+#include "font.hpp"
+#include "install.hpp"
 
-void printSubMenu(void)
+void printSubMenu(frame_t& frame)
 {
     for (int y = 0; y < 720; y++)
     {
         for (int x = 0; x < 1280; x++)
         {
-            DrawPixel(x, y, themeCurrent.backgroundDim);
+            DrawPixel(frame, x, y, themeCurrent.backgroundDim);
         }
     }
     for (int y = 0; y < 720; y++)
     {
         for (int x = 200; x < 1080; x++)
         {
-            DrawPixel(x, y, themeCurrent.backgroundColor);
+            DrawPixel(frame, x, y, themeCurrent.backgroundColor);
         }
     }
     for (int x = 230; x < 1050; x++)
     {
-        DrawPixel(x, 54, themeCurrent.seperatorColor);
-        DrawPixel(x, 676, themeCurrent.seperatorColor);
+        DrawPixel(frame, x, 54, themeCurrent.seperatorColor);
+        DrawPixel(frame, x, 676, themeCurrent.seperatorColor);
     }
 }
 
-void printTitles(void)
+void printTitles(frame_t& frame)
 {
     if (!g_titlesLoaded)
     {
-        DrawText(fontLarge, 45, 96, themeCurrent.textColor, "Titles could not be loaded.\nCheck FreeShopNX.txt or press " FON_Y " to update from internet.");
+        DrawText(frame, fontLarge, 45, 96, themeCurrent.textColor, "Titles could not be loaded.\nCheck FreeShopNX.txt or press " FON_Y " to update from internet.");
         g_maxEntries = 1;
         return;
     }
@@ -47,21 +49,21 @@ void printTitles(void)
     for (uint j = start; j < end; j++)
     {
         if (j == g_idselected)
-            DrawText(fontMedium, pos.x, pos.y, themeCurrent.selectedColor, g_titleList[j].name.c_str());
+            DrawText(frame, fontMedium, pos.x, pos.y, themeCurrent.selectedColor, g_titleList[j].name.c_str());
         else
-            DrawText(fontMedium, pos.x, pos.y, themeCurrent.textColor, g_titleList[j].name.c_str());
+            DrawText(frame, fontMedium, pos.x, pos.y, themeCurrent.textColor, g_titleList[j].name.c_str());
         GetTextDimensions(fontMedium, g_titleList[j].name.c_str(), NULL, &textHeight);
         char buf[64];
         sprintf(buf, "Title ID: %016lx  |  %s", g_titleList[j].titleID, g_titleList[j].size_string.c_str());
         pos.y += textHeight - 20;
-        DrawText(fontTiny, pos.x+30, pos.y, themeCurrent.textColor, buf);
+        DrawText(frame, fontTiny, pos.x+30, pos.y, themeCurrent.textColor, buf);
         pos.y += 50;
     }
 }
 
-void printInfo(const std::string& rightsID)
+void printInfo(frame_t& frame, const std::string& rightsID)
 {
-    printSubMenu();
+    printSubMenu(frame);
     std::string title;
     std::string release;
     std::string players;
@@ -160,37 +162,37 @@ void printInfo(const std::string& rightsID)
 
             g_totalInfoLines = infoLineList.size();
 
-            DrawTextTruncateW(fontLarge, 245, 46, themeCurrent.textColor, title.c_str(), 730, "...");
-            DrawTextTruncateW(fontTiny, 250, 70, themeCurrent.textColor, meta.c_str(), 770, "...");
+            DrawTextTruncateW(frame, fontLarge, 245, 46, themeCurrent.textColor, title.c_str(), 730, "...");
+            DrawTextTruncateW(frame, fontTiny, 250, 70, themeCurrent.textColor, meta.c_str(), 770, "...");
 
             uint32_t centerX;
             GetTextDimensions(fontSmall, desc.c_str(), &centerX, NULL);
             if (!g_infoPageLines)
-                g_infoPageLines = DrawTextTruncateH(fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, desc.c_str(), 0, 530, "(cont.)");
+                g_infoPageLines = DrawTextTruncateH(frame, fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, desc.c_str(), 0, 530, "(cont.)");
             else
-                DrawTextTruncateH(fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, desc.c_str(), g_infoLine, 530, "(cont.)");
+                DrawTextTruncateH(frame, fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, desc.c_str(), g_infoLine, 530, "(cont.)");
         }
         else
         {
-            DrawText(fontLarge, 245, 46, themeCurrent.textColor, "No Info");
+            DrawText(frame, fontLarge, 245, 46, themeCurrent.textColor, "No Info");
             uint32_t centerX;
             GetTextDimensions(fontSmall, "No info for this title", &centerX, NULL);
-            DrawText(fontSmall, (1280-centerX)/2, 120, themeCurrent.textColor, "No info for this title");
+            DrawText(frame, fontSmall, (1280-centerX)/2, 120, themeCurrent.textColor, "No info for this title");
         }
     }
     else
     {
-        DrawText(fontLarge, 245, 46, themeCurrent.textColor, "Error");
+        DrawText(frame, fontLarge, 245, 46, themeCurrent.textColor, "Error");
         uint32_t centerX;
         GetTextDimensions(fontSmall, "Could not load info.json", &centerX, NULL);
-        DrawText(fontSmall, (1280 - centerX) / 2, 120, themeCurrent.textColor, "Could not load info.json");
+        DrawText(frame, fontSmall, (1280 - centerX) / 2, 120, themeCurrent.textColor, "Could not load info.json");
     }
 }
 
-void printAbout(void)
+void printAbout(frame_t& frame)
 {
-    printSubMenu();
-    DrawText(fontLarge, 245, 46, themeCurrent.textColor, "About");
+    printSubMenu(frame);
+    DrawText(frame, fontLarge, 245, 46, themeCurrent.textColor, "About");
     uint32_t centerX;
     char aboutText[] = "Warning: You may be banned.\n\n"
                        "Credits:\n\n"
@@ -204,14 +206,14 @@ void printAbout(void)
                        "  \u2022 yellows8 - HBMenu shared font code and theming code\n\n"
                        "  \u2022 megasharer - Resource acquisition";
     GetTextDimensions(fontSmall, aboutText, &centerX, NULL);
-    DrawText(fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, aboutText);
+    DrawText(frame, fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, aboutText);
 }
 
-void printInstall(void)
+void printInstall(frame_t& frame)
 {
     static char header[8];
     static char text[160];
-    printSubMenu();
+    printSubMenu(frame);
     if (!g_installStarted)
     {
         if (installTitle())
@@ -227,16 +229,16 @@ void printInstall(void)
         }
         g_installStarted = true;
     }
-    DrawText(fontLarge, 245, 46, themeCurrent.textColor, header);
+    DrawText(frame, fontLarge, 245, 46, themeCurrent.textColor, header);
     uint32_t centerX;
     GetTextDimensions(fontSmall, text, &centerX, NULL);
-    DrawText(fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, text);
+    DrawText(frame, fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, text);
 }
 
-void printChangelog(void)
+void printChangelog(frame_t& frame)
 {
-    printSubMenu();
-    DrawText(fontLarge, 245, 46, themeCurrent.textColor, "Changelog");
+    printSubMenu(frame);
+    DrawText(frame, fontLarge, 245, 46, themeCurrent.textColor, "Changelog");
     std::stringstream infoString(g_changelog);
     std::string infoLines;
     std::vector<std::string> infoLineList;
@@ -251,7 +253,7 @@ void printChangelog(void)
     uint32_t centerX;
     GetTextDimensions(fontSmall, g_changelog.c_str(), &centerX, NULL);
     if (!g_infoPageLines)
-        g_infoPageLines = DrawTextTruncateH(fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, g_changelog.c_str(), 0, 530, "(cont.)");
+        g_infoPageLines = DrawTextTruncateH(frame, fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, g_changelog.c_str(), 0, 530, "(cont.)");
     else
-        DrawTextTruncateH(fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, g_changelog.c_str(), g_infoLine, 530, "(cont.)");
+        DrawTextTruncateH(frame, fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, g_changelog.c_str(), g_infoLine, 530, "(cont.)");
 }

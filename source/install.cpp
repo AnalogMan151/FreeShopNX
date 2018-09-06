@@ -1,6 +1,10 @@
-#include "common.hpp"
-#include "configuration.hpp"
+#include "install.hpp"
+extern "C" {
+    #include <switch/arm/atomics.h>
+    #include <switch/kernel/detect.h>
+}
 #include "globals.hpp"
+#include "configuration.hpp"
 
 Result esInitialize(void)
 {
