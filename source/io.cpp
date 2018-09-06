@@ -1,10 +1,17 @@
-#include "common.hpp"
+#include "io.hpp"
+#include <algorithm>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <climits>
+#include <curl/curl.h>
+#include "configuration.hpp"
 #include "globals.hpp"
 
 bool sorter(Title lhs, Title rhs)
 {
-    transform(lhs.name.begin(), lhs.name.end(), lhs.name.begin(), ::tolower);
-    transform(rhs.name.begin(), rhs.name.end(), rhs.name.begin(), ::tolower);
+    std::transform(lhs.name.begin(), lhs.name.end(), lhs.name.begin(), ::tolower);
+    std::transform(rhs.name.begin(), rhs.name.end(), rhs.name.begin(), ::tolower);
     if (g_sort == SortOrder::RELEASE_DATE_DEC)
     {
         if (lhs.releaseDate == rhs.releaseDate)

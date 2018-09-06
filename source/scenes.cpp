@@ -1,15 +1,21 @@
-#include <string>
 #include "scenes.hpp"
+extern "C" {
+    #include <switch/gfx/gfx.h>
+    #include <switch/kernel/svc.h>
+    #include <switch/services/hid.h>
+}
 #include "globals.hpp"
-#include "common.hpp"
+#include "font.hpp"
+#include "menu.hpp"
+#include "ui.hpp"
 
-void title_scene_t::draw()
+void title_scene_t::draw(frame_t& frame)
 {
     uint32_t rightX;
     char btnConfig_bot[] = FON_PL " Quit   " FON_MI " About   " FON_L3 " Sort   " FON_L FON_R " 10 Pages   " FON_LT FON_RT " Pages   " FON_UP FON_DN " Scroll   " FON_A " Details";
     GetTextDimensions(fontSmall, btnConfig_bot, &rightX, NULL);
-    DrawText(fontSmall, 1280 - rightX - 30, 704, themeCurrent.textColor, btnConfig_bot);
-    printTitles();
+    DrawText(frame, fontSmall, 1280 - rightX - 30, 704, themeCurrent.textColor, btnConfig_bot);
+    printTitles(frame);
     char pages[25];
 
     // BEWARE YE WHO ATTEMPTS DECIPHERING THIS AS THY MAY GO MAD
@@ -17,7 +23,7 @@ void title_scene_t::draw()
     // THY IS SAFE TO OPEN THYNE EYES ONCE AGAIN
 
     sprintf(pages, "Page: %04i/%04i", ((g_idselected / g_maxEntries) + 1), total_pages);
-    DrawText(fontSmall, 30, 704, themeCurrent.textColor, pages);
+    DrawText(frame, fontSmall, 30, 704, themeCurrent.textColor, pages);
     uint32_t rightX1;
     uint32_t rightX2;
     uint32_t rightX3;
@@ -28,11 +34,11 @@ void title_scene_t::draw()
     GetTextDimensions(fontSmall, FON_X " NAND   " FON_Y " Update List", &rightX1, NULL);
     GetTextDimensions(fontSmall, btnConfig_top2, &rightX2, NULL);
     GetTextDimensions(fontSmall, getSort(g_sort), &rightX3, NULL);
-    DrawText(fontSmall, 1280 - rightX1 - 30, 32, themeCurrent.textColor, btnConfig_top1);
-    DrawText(fontSmall, 1280 - rightX2 - 30, 32, themeCurrent.textColor, btnConfig_top2);
-    DrawText(fontSmall, ((1280 - rightX3) /2), 32, themeCurrent.textColor, getSort(g_sort));
+    DrawText(frame, fontSmall, 1280 - rightX1 - 30, 32, themeCurrent.textColor, btnConfig_top1);
+    DrawText(frame, fontSmall, 1280 - rightX2 - 30, 32, themeCurrent.textColor, btnConfig_top2);
+    DrawText(frame, fontSmall, ((1280 - rightX3) /2), 32, themeCurrent.textColor, getSort(g_sort));
 
-    drawSeperators();
+    drawSeperators(frame);
 }
 
 void title_scene_t::handle_input(u64 kDown, u64 kHeld)
@@ -56,12 +62,12 @@ void title_scene_t::handle_input(u64 kDown, u64 kHeld)
         if (kHeld & KEY_UP)
         {
             g_idselected = (g_idselected > 0) ? (g_idselected - 1) : g_titleList.size() - 1;
-            SleepNano(200000000); // TODO: Bad way to slow down the scrolling speed, change that
+            svcSleepThread(200000000); // FIXME: Bad way to slow down the scrolling speed, change that
         }
         else if (kHeld & KEY_DOWN)
         {
             g_idselected = (g_idselected < g_titleList.size() - 1) ? (g_idselected + 1) : 0;
-            SleepNano(200000000); // TODO: Bad way to slow down the scrolling speed, change that
+            svcSleepThread(200000000); // FIXME: Bad way to slow down the scrolling speed, change that
         }
         else if (kDown & KEY_LEFT)
         {
@@ -82,14 +88,14 @@ void title_scene_t::handle_input(u64 kDown, u64 kHeld)
     }
 }
 
-void info_scene_t::draw()
+void info_scene_t::draw(frame_t& frame)
 {
-    printTitles();
+    printTitles(frame);
     uint32_t rightX;
     char btnConfig_bot[] = FON_UP FON_DN " Scroll   " FON_B " Back   " FON_A " Install";
     GetTextDimensions(fontSmall, btnConfig_bot, &rightX, NULL);
-    printInfo(g_titleList[g_idselected].rightsID);
-    DrawText(fontSmall, 1280 - rightX - 230, 704, themeCurrent.textColor, btnConfig_bot);
+    printInfo(frame, g_titleList[g_idselected].rightsID);
+    DrawText(frame, fontSmall, 1280 - rightX - 230, 704, themeCurrent.textColor, btnConfig_bot);
 }
 
 void info_scene_t::handle_input(u64 kDown, u64 kHeld)
@@ -100,23 +106,23 @@ void info_scene_t::handle_input(u64 kDown, u64 kHeld)
     else if (kHeld & KEY_DOWN && (g_infoLine + g_infoPageLines < g_totalInfoLines + 1)) { g_infoLine += 1; }
 }
 
-void update_scene_t::draw()
+void update_scene_t::draw(frame_t& frame)
 {
     uint32_t rightX;
     if (!g_changelog.empty())
     {
         char btnConfig_bot[] = FON_UP FON_DN " Scroll   " FON_B " Back";
         GetTextDimensions(fontSmall, btnConfig_bot, &rightX, NULL);
-        printChangelog();
-        DrawText(fontSmall, 1280 - rightX - 230, 704, themeCurrent.textColor, btnConfig_bot);
+        printChangelog(frame);
+        DrawText(frame, fontSmall, 1280 - rightX - 230, 704, themeCurrent.textColor, btnConfig_bot);
         return;
     }
 
     bool error = false;
     char btnConfig_bot[] = "\uE140 Please wait...";
     GetTextDimensions(fontSmall, btnConfig_bot, &rightX, NULL);
-    DrawText(fontSmall, 1280 - rightX - 30, 704, themeCurrent.textColor, btnConfig_bot);
-    drawSeperators();
+    DrawText(frame, fontSmall, 1280 - rightX - 30, 704, themeCurrent.textColor, btnConfig_bot);
+    drawSeperators(frame);
     gfxFlushBuffers();
     gfxSwapBuffers();
     gfxWaitForVsync();
@@ -129,7 +135,7 @@ void update_scene_t::draw()
     }
     else
     {
-        pos = DrawText(fontLarge, 45, pos.y, themeCurrent.textColor, "Could not download updated list from server\nCheck config.conf or internet connection\n\n");
+        pos = DrawText(frame, fontLarge, 45, pos.y, themeCurrent.textColor, "Could not download updated list from server\nCheck config.conf or internet connection\n\n");
         error = true;
     }
 
@@ -139,7 +145,7 @@ void update_scene_t::draw()
     }
     else
     {
-        pos = DrawText(fontLarge, 45, pos.y, themeCurrent.textColor, "Could not download updated info JSON from Server\nCheck config.conf or internet connection\n\n");
+        pos = DrawText(frame, fontLarge, 45, pos.y, themeCurrent.textColor, "Could not download updated info JSON from Server\nCheck config.conf or internet connection\n\n");
         error = true;
     }
 
@@ -148,7 +154,7 @@ void update_scene_t::draw()
         gfxFlushBuffers();
         gfxSwapBuffers();
         gfxWaitForVsync();
-        SleepNano((u64)1000000000*5); // TODO: What is the use for that ? We should never sleep a thread
+        svcSleepThread((u64)1000000000 * 5); // TODO: What is the use for that ? We should never sleep a thread
     }
     g_idselected = 0;
     if (g_changelog.empty()) g_scene = &title_scene;
@@ -169,14 +175,14 @@ void update_scene_t::handle_input(u64 kDown, u64 kHeld)
     }
 }
 
-void about_scene_t::draw()
+void about_scene_t::draw(frame_t& frame)
 {
-    printTitles();
-    printAbout();
+    printTitles(frame);
+    printAbout(frame);
     uint32_t rightX;
     char btnConfig_bot[] = FON_B " Back";
     GetTextDimensions(fontSmall, btnConfig_bot, &rightX, NULL);
-    DrawText(fontSmall, 1280 - rightX - 230, 704, themeCurrent.textColor, btnConfig_bot);
+    DrawText(frame, fontSmall, 1280 - rightX - 230, 704, themeCurrent.textColor, btnConfig_bot);
 }
 
 void about_scene_t::handle_input(u64 kDown, u64 kHeld)
@@ -184,14 +190,14 @@ void about_scene_t::handle_input(u64 kDown, u64 kHeld)
     if (kDown & KEY_B) { g_scene = &title_scene; }
 }
 
-void install_scene_t::draw()
+void install_scene_t::draw(frame_t& frame)
 {
-    printTitles();
-    printInstall();
+    printTitles(frame);
+    printInstall(frame);
     uint32_t rightX;
     char btnConfig_bot[] = FON_B " Back";
     GetTextDimensions(fontSmall, btnConfig_bot, &rightX, NULL);
-    DrawText(fontSmall, 1280 - rightX - 230, 704, themeCurrent.textColor, btnConfig_bot);
+    DrawText(frame, fontSmall, 1280 - rightX - 230, 704, themeCurrent.textColor, btnConfig_bot);
 }
 
 void install_scene_t::handle_input(u64 kDown, u64 kHeld)
