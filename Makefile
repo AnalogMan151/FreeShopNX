@@ -139,7 +139,7 @@ ifneq ($(ROMFS),)
 	export NROFLAGS += --romfsdir=$(CURDIR)/$(ROMFS)
 endif
 
-.PHONY: $(BUILD) clean all
+.PHONY: $(BUILD) clean all zip
 
 #---------------------------------------------------------------------------------
 all: $(BUILD)
@@ -151,7 +151,19 @@ $(BUILD):
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).pfs0 $(TARGET).nso $(TARGET).nro $(TARGET).nacp $(TARGET).elf
+	@rm -fr $(BUILD) $(TARGET).pfs0 $(TARGET).nso $(TARGET).nro $(TARGET).nacp $(TARGET).elf $(TARGET)*.zip
+
+
+#---------------------------------------------------------------------------------
+zip:
+	@echo zipping ...
+	@rm -fr $(TARGET)*.zip
+	@mkdir -p switch/$(TARGET)/
+	@cp -r $(TARGET).nro switch/$(TARGET)/
+	@cp -r config.conf switch/$(TARGET)/
+	@zip -rq $(TARGET)-$(APP_VERSION).zip switch/
+	@rm -fr switch/
+	@echo created $(TARGET)-$(APP_VERSION).zip
 
 
 #---------------------------------------------------------------------------------
