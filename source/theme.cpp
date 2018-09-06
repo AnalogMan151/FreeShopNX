@@ -1,4 +1,4 @@
-#include "common.hpp"
+#include "theme.hpp"
 #include "globals.hpp"
 
 void themeStartup(ThemePreset preset) {
