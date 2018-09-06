@@ -4,8 +4,10 @@
 #include <vector>
 #include <memory>
 
-#include <switch/services/fs.h>
-#include <switch/services/sm.h>
+extern "C" {
+    #include <switch/services/fs.h>
+    #include <switch/services/sm.h>
+}
 
 #include "json.hpp"
 #include "io.hpp"
@@ -20,9 +22,7 @@ extern int g_infoPageLines;
 extern int g_installLocation;
 extern scene_t* g_scene;
 extern int g_totalInfoLines;
-extern uint8_t* g_framebuf;
 extern uint32_t g_displayedTotal;
-extern uint32_t g_framebuf_width;
 extern uint32_t g_idselected;
 extern uint32_t g_maxEntries;
 extern uint64_t g_esRefCnt;
