@@ -266,7 +266,7 @@ bool getUpdateList(void)
     curl = curl_easy_init();
     if (curl && loadConfig() && config.count("title_key_url"))
     {
-        titleList = fopen(TITLES_FILE_PATH, "wb");
+        titleList = fopen(TITLES_FILE_PATH ".new", "wb");
         curl_easy_setopt(curl, CURLOPT_URL, config["title_key_url"].get<std::string>().c_str());
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, titleList);
@@ -276,10 +276,13 @@ bool getUpdateList(void)
         {
             curl_easy_cleanup(curl);
             fclose(titleList);
+            std::remove(TITLES_FILE_PATH ".new");
             return false;
         }
         curl_easy_cleanup(curl);
         fclose(titleList);
+        std::remove(TITLES_FILE_PATH);
+        std::rename(TITLES_FILE_PATH ".new", TITLES_FILE_PATH);
         return true;
     } 
     else 
@@ -298,7 +301,7 @@ bool getUpdateInfo(void)
     curl = curl_easy_init();
     if (curl && loadConfig() && config.count("title_info_url"))
     {
-        infoJSON = fopen(INFOS_FILE_PATH, "wb");
+        infoJSON = fopen(INFOS_FILE_PATH ".new", "wb");
         curl_easy_setopt(curl, CURLOPT_URL, config["title_info_url"].get<std::string>().c_str());
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, infoJSON);
@@ -308,10 +311,13 @@ bool getUpdateInfo(void)
         {
             curl_easy_cleanup(curl);
             fclose(infoJSON);
+            std::remove(INFOS_FILE_PATH ".new");
             return false;
         }
         curl_easy_cleanup(curl);
         fclose(infoJSON);
+        std::remove(INFOS_FILE_PATH);
+        std::rename(INFOS_FILE_PATH ".new", INFOS_FILE_PATH);
         return true;
     }
     else
