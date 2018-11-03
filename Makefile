@@ -32,7 +32,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 APP_TITLE   := FreeShopNX - CDN title installer
 APP_AUTHOR  := AnalogMan
-APP_VERSION := 0.4.0
+APP_VERSION := 0.5.0
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build.make
 SOURCES		:=	source
@@ -49,7 +49,7 @@ ARCH	:=	-march=armv8-a -mtune=cortex-a57 -mtp=soft -fPIE
 CFLAGS	:=	-g -Wall -O2 -ffunction-sections \
 			$(ARCH) $(DEFINES)
 
-CFLAGS	+=	$(INCLUDE) -D__SWITCH__ `freetype-config --cflags`
+CFLAGS	+=	$(INCLUDE) `freetype-config --cflags`
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fexceptions -std=gnu++17
 

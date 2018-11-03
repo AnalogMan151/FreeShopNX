@@ -32,3 +32,4 @@ info_scene_t info_scene;
 update_scene_t update_scene;
 about_scene_t about_scene;
 install_scene_t install_scene;
+ticket_scene_t ticket_scene;

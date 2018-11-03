@@ -51,3 +51,11 @@ public:
     void draw(frame_t& frame) override;
     void handle_input(u64 kDown, u64 kHeld) override;
 };
+
+class ticket_scene_t
+    : public scene_t
+{
+  public:
+    void draw(frame_t &frame) override;
+    void handle_input(u64 kDown, u64 kHeld) override;
+};

@@ -235,6 +235,31 @@ void printInstall(frame_t& frame)
     DrawText(frame, fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, text);
 }
 
+void printTicket(frame_t &frame)
+{
+    static char header[8];
+    static char text[160];
+    printSubMenu(frame);
+    if (!g_installStarted)
+    {
+        if (installTicket())
+        {
+            sprintf(header, "Install");
+            sprintf(text, "Ticket ID %016lx installed successfully!", g_titleList[g_idselected].titleID);
+        }
+        else
+        {
+            sprintf(header, "Error");
+            sprintf(text, "Failed to install install ticket. Check that you have ES signature patching.");
+        }
+        g_installStarted = true;
+    }
+    DrawText(frame, fontLarge, 245, 46, themeCurrent.textColor, header);
+    uint32_t centerX;
+    GetTextDimensions(fontSmall, text, &centerX, NULL);
+    DrawText(frame, fontSmall, ((1280 - centerX) / 2), 120, themeCurrent.textColor, text);
+}
+
 void printChangelog(frame_t& frame)
 {
     printSubMenu(frame);

@@ -45,3 +45,4 @@ extern info_scene_t info_scene;
 extern update_scene_t update_scene;
 extern about_scene_t about_scene;
 extern install_scene_t install_scene;
+extern ticket_scene_t ticket_scene;

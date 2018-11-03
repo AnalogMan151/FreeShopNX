@@ -1,6 +1,6 @@
 #include "scenes.hpp"
 extern "C" {
-    #include <switch/gfx/gfx.h>
+    #include <switch/display/gfx.h>
     #include <switch/kernel/svc.h>
     #include <switch/services/hid.h>
 }
@@ -12,7 +12,7 @@ extern "C" {
 void title_scene_t::draw(frame_t& frame)
 {
     uint32_t rightX;
-    char btnConfig_bot[] = FON_PL " Quit   " FON_MI " About   " FON_L3 " Sort   " FON_L FON_R " 10 Pages   " FON_LT FON_RT " Pages   " FON_UP FON_DN " Scroll   " FON_A " Details";
+    char btnConfig_bot[] = FON_HM " Quit   " FON_MI " About   " FON_L3 " Sort   " FON_L FON_R " 10 Pages   " FON_LT FON_RT " Pages   " FON_UP FON_DN " Scroll   " FON_A " Details";
     GetTextDimensions(fontSmall, btnConfig_bot, &rightX, NULL);
     DrawText(frame, fontSmall, 1280 - rightX - 30, 704, themeCurrent.textColor, btnConfig_bot);
     printTitles(frame);
@@ -92,7 +92,7 @@ void info_scene_t::draw(frame_t& frame)
 {
     printTitles(frame);
     uint32_t rightX;
-    char btnConfig_bot[] = FON_UP FON_DN " Scroll   " FON_B " Back   " FON_A " Install";
+    char btnConfig_bot[] = FON_UP FON_DN " Scroll   " FON_B " Back   " FON_X " Install Ticket   " FON_A " Install Title";
     GetTextDimensions(fontSmall, btnConfig_bot, &rightX, NULL);
     printInfo(frame, g_titleList[g_idselected].rightsID);
     DrawText(frame, fontSmall, 1280 - rightX - 230, 704, themeCurrent.textColor, btnConfig_bot);
@@ -102,6 +102,7 @@ void info_scene_t::handle_input(u64 kDown, u64 kHeld)
 {
     if (kDown & KEY_A) { g_scene = &install_scene; }
     else if (kDown & KEY_B) { g_scene = &title_scene; }
+    else if (kDown & KEY_X) { g_scene = &ticket_scene; }
     else if (kHeld & KEY_UP && g_infoLine > 0) { g_infoLine -= 1; }
     else if (kHeld & KEY_DOWN && (g_infoLine + g_infoPageLines < g_totalInfoLines + 1)) { g_infoLine += 1; }
 }
@@ -200,7 +201,27 @@ void install_scene_t::draw(frame_t& frame)
     DrawText(frame, fontSmall, 1280 - rightX - 230, 704, themeCurrent.textColor, btnConfig_bot);
 }
 
+
 void install_scene_t::handle_input(u64 kDown, u64 kHeld)
+{
+    if (kDown & KEY_B)
+    {
+        g_installStarted = false;
+        g_scene = &title_scene;
+    }
+}
+
+void ticket_scene_t::draw(frame_t &frame)
+{
+    printTitles(frame);
+    printTicket(frame);
+    uint32_t rightX;
+    char btnConfig_bot[] = FON_B " Back";
+    GetTextDimensions(fontSmall, btnConfig_bot, &rightX, NULL);
+    DrawText(frame, fontSmall, 1280 - rightX - 230, 704, themeCurrent.textColor, btnConfig_bot);
+}
+
+void ticket_scene_t::handle_input(u64 kDown, u64 kHeld)
 {
     if (kDown & KEY_B)
     {

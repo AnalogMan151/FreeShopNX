@@ -1,6 +1,6 @@
 #include "ui.hpp"
 extern "C" {
-    #include <switch/gfx/gfx.h>
+    #include <switch/display/gfx.h>
 }
 #include "globals.hpp"
 #include "font.hpp"

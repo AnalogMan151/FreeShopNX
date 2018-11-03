@@ -1,6 +1,5 @@
-#include <switch/result.h>
 extern "C" {
-    #include <switch/gfx/gfx.h>
+    #include <switch/display/gfx.h>
     #include <switch/runtime/devices/socket.h>
     #include <switch/services/applet.h>
     #include <switch/services/fatal.h>
@@ -9,6 +8,7 @@ extern "C" {
     #include <switch/services/set.h>
     #include <switch/services/ncm.h>
     #include <switch/services/ns.h>
+    #include <switch/result.h>
 }
 #include "globals.hpp"
 #include "font.hpp"
@@ -17,6 +17,7 @@ extern "C" {
 
 int main(int argc, char **argv)
 {
+    appletLockExit();
     g_scene = &title_scene;
     Result rc = 0;
     g_infoLoaded = loadInfo();
@@ -73,10 +74,9 @@ int main(int argc, char **argv)
 
         u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
         u64 kHeld = hidKeysHeld(CONTROLLER_P1_AUTO);
-        if (kDown & KEY_PLUS) break; // Handle the exit key whatever the scene
         g_scene->handle_input(kDown, kHeld);
     }
-
+    
     socketExit();
     fontExit();
     plExit();
@@ -85,7 +85,7 @@ int main(int argc, char **argv)
     nsExit();
     ncmExit();
     setsysExit();
-
     gfxExit();
+    appletUnlockExit();
     return 0;
 }
