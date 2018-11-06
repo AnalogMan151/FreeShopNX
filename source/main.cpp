@@ -27,6 +27,7 @@ int main(int argc, char **argv)
     socketInitializeDefault();
 
     appletSetScreenShotPermission(1);
+    appletInitializeGamePlayRecording();
 
     ColorSetId theme;
     rc = setsysInitialize();
