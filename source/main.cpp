@@ -28,6 +28,7 @@ int main(int argc, char **argv)
 
     appletSetScreenShotPermission(1);
     appletInitializeGamePlayRecording();
+    appletSetGamePlayRecordingState(1);
 
     ColorSetId theme;
     rc = setsysInitialize();
