@@ -1,5 +1,6 @@
 build/
 build.make/
+nsp/
 Testing/
 .vscode/
 .DS_Store
@@ -9,5 +10,6 @@ Testing/
 *.nro
 *.nso
 *.pfs0
+*.npdm
 *.zip
 *.conf
