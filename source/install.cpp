@@ -209,7 +209,7 @@ Result installTikCert(u64 tid, u8 mkey, u64 tkeyh, u64 tkeyl)
     // patch TIK with title data
     memcpy(tikBuf + 0x180, &tkeyh, 8);
     memcpy(tikBuf + 0x188, &tkeyl, 8);
-    memcpy(tikBuf + 0x286, &mkey, 1);
+    memcpy(tikBuf + 0x285, &mkey, 1);
     memcpy(tikBuf + 0x2A0, &tid, 8);
     memcpy(tikBuf + 0x2AF, &mkey, 1);
 
